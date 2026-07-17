@@ -49,7 +49,7 @@ This is not a content-heavy CMS. It is one public landing page backed by a small
 - Headline, subhead, one primary CTA ("View the upcoming tournament") linking to the Tournament section, plus a "Next up: [tournament name], [date]" microcopy line, pulled dynamically from the active tournament row.
 - **Performance requirement (hard constraint):** video must never block or slow first paint.
   - Serve a compressed, audio-stripped MP4 (H.264) with a WebM fallback, encoded via ffmpeg, target ≤ 3–4MB for a 6–10s loop.
-  - `<video autoplay muted loop playsInline preload="none" poster="hero-poster.jpg">` — always ship a static poster image as the first paint.
+  - `<video autoplay muted loop playsInline preload="none" poster="hero-poster.svg">` — always ship a static poster image as the first paint.
   - Only mount/load the `<video>` source once it scrolls into view (IntersectionObserver) — do not eagerly load on page mount.
   - Respect `prefers-reduced-motion: reduce` — render the poster image only, no video element, in that case.
   - On connections reporting `navigator.connection.saveData` or slow effective type (where supported), fall back to the static poster instead of loading video.

@@ -17,6 +17,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-card: var(--card);
@@ -28,39 +29,73 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
 }
 
 :root {
-  --background: #151F2B;
-  --foreground: #FAEAC2;
-  --card: #1E2A38;
-  --card-foreground: #FAEAC2;
-  --popover: #1E2A38;
-  --popover-foreground: #FAEAC2;
-  --primary: #FF6C47;
-  --primary-foreground: #FFFFFF;
-  --secondary: #DB856A;
-  --secondary-foreground: #151F2B;
-  --muted: #1E2A38;
-  --muted-foreground: #A0AEC0;
-  --accent: #FAEAC2;
-  --accent-foreground: #151F2B;
-  --destructive: #FF4444;
-  --border: #2D3A4A;
-  --input: #2D3A4A;
-  --ring: #FF6C47;
+  --background: #151f2b;
+  --foreground: #faeac2;
+  --card: #1e2a38;
+  --card-foreground: #faeac2;
+  --popover: #1e2a38;
+  --popover-foreground: #faeac2;
+  --primary: #ff6c47;
+  --primary-foreground: #faeac2;
+  --secondary: #db856a;
+  --secondary-foreground: #151f2b;
+  --muted: #1e2a38;
+  --muted-foreground: #a0aec0;
+  --accent: #faeac2;
+  --accent-foreground: #151f2b;
+  --destructive: #ff4444;
+  --border: #faeac2;
+  --border-subtle: rgba(250, 234, 194, 0.3);
+  --input: #2d3a4a;
+  --ring: #ff6c47;
   --radius: 0.625rem;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border-subtle outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(-25%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 50s linear infinite;
+}
+
+@media (hover: hover) {
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation-play-state: paused;
   }
 }

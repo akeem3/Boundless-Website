@@ -1,0 +1,126 @@
+# Boundless FC - Project Memory
+
+## Project Overview
+- **Name**: Boundless FC
+- **Type**: Single-page marketing + operations site for international grassroots futsal community
+- **Stack**: Next.js 16 App Router, TypeScript, Tailwind v4, shadcn/ui v4 (base-nova)
+- **Budget**: $0 (Vercel Hobby + Supabase Free Tier)
+
+## Design System (STRICTLY FOLLOW)
+
+### Colors (All Tokenized)
+| Token | Value | Usage |
+|---|---|---|
+| `--background` | `#151F2B` | Main dark background (all sections except shop) |
+| `--foreground` | `#FAEAC2` | ALL text, headings, nav links |
+| `--primary` | `#FF6C47` | Orange wine - subheaders, prices, CTA buttons (sessions/tournaments) |
+| `--primary-foreground` | `#FAEAC2` | Text on primary buttons |
+| `--secondary` | `#DB856A` | Light orange - subheaders in hero/about |
+| `--accent` | `#FAEAC2` | Gold accent - buttons, highlights |
+| `--accent-foreground` | `#151F2B` | Dark text on accent buttons |
+| `--border` | `#FAEAC2` | Full opacity border |
+| `--border-subtle` | `rgba(250, 234, 194, 0.3)` | 0.3 opacity borders (tokenized) |
+
+### CRITICAL RULES
+- **NO WHITE ANYWHERE** - `#FFFFFF` removed from design system
+- **Font**: Inter ONLY - no Oswald, no display font
+- **All colors MUST be tokenized** - no hardcoded hex in components
+- **Borders**: Use `border-border-subtle` (0.3 opacity) for all borders
+
+### Shop Section Exception
+- Background: `#FAEAC2` (light cream)
+- Text: `#151F2B` (dark)
+- Prices: `#FF6C47` (orange wine)
+- "Place Order" buttons: Dark background, light text
+
+## Completed Work
+
+### Epic 1: Foundation & Design System ✅
+- Project scaffolded with create-next-app
+- shadcn/ui initialized with 13 components
+- Supabase client/server/middleware created
+- Database migrations created (8 tables + RLS)
+- Storage policies created (4 buckets)
+- Middleware handles missing env vars gracefully
+
+### Epic 2: Landing Page Structure (IN PROGRESS)
+
+#### Story 2.1: Global Layout & Navbar ✅
+- Created `src/components/blocks/Navbar.tsx`
+- Sticky nav with logo + brand text
+- Desktop: nav links centered, CTA button right
+- Mobile: Sheet drawer from right
+- All text uses `text-foreground` (gold accent)
+- CTA button uses `bg-accent` with `text-accent-foreground`
+- Scroll anchoring with smooth scroll
+- `prefers-reduced-motion` support
+
+#### Story 2.2: Hero Section (IN PROGRESS)
+- Created `src/hooks/use-prefers-reduced-motion.ts`
+- Created placeholder `src/components/blocks/HeroSection.tsx`
+- Need to implement: lazy video, poster, IntersectionObserver
+
+#### Story 2.3: Sponsor Marquee (PENDING)
+- Created placeholder `src/components/blocks/SponsorMarquee.tsx`
+- Need to implement: pure CSS animation, duplicated logos
+
+## Files Modified/Created
+
+### Core Config
+- `src/app/globals.css` - Design tokens, border-subtle, Inter font
+- `src/app/layout.tsx` - Inter only, no Oswald
+- `src/app/(public)/layout.tsx` - Navbar wrapper
+- `src/app/(public)/page.tsx` - All sections in order
+
+### Components
+- `src/components/blocks/Navbar.tsx` - Full implementation
+- `src/components/blocks/HeroSection.tsx` - Placeholder
+- `src/components/blocks/SponsorMarquee.tsx` - Placeholder
+- `src/components/blocks/SessionsSection.tsx` - Placeholder
+- `src/components/blocks/TournamentSection.tsx` - Placeholder
+- `src/components/blocks/ShopSection.tsx` - Placeholder
+- `src/components/blocks/AboutSection.tsx` - Placeholder
+- `src/components/blocks/ContactSection.tsx` - Placeholder
+- `src/components/blocks/Footer.tsx` - Implementation
+
+### Hooks
+- `src/hooks/use-prefers-reduced-motion.ts` - Reduced motion detection
+
+### Constants
+- `src/lib/constants/copy.ts` - Added `NAV_CTA_TEXT`
+
+### Supabase
+- `src/lib/supabase/middleware.ts` - Handles missing env vars
+
+### Assets
+- `public/logo.svg` - Placeholder logo
+
+## Key Decisions & Constraints
+
+1. **No `asChild` prop** - shadcn v4 with @base-ui/react doesn't support it
+2. **SheetTrigger** - Use directly with icon, don't wrap Button inside
+3. **buttonVariants** - Available for Link styling with button appearance
+4. **React compiler** - Avoid synchronous setState in effects
+5. **Next.js middleware** - Deprecated, using proxy convention (functional but deprecated)
+
+## Current Issues / TODOs
+
+1. **Story 2.2**: Need to implement hero section with:
+   - Lazy video via IntersectionObserver
+   - Poster image as LCP
+   - SaveData check
+   - Reduced motion support
+
+2. **Story 2.3**: Need to implement sponsor marquee with:
+   - Pure CSS animation
+   - Duplicated logo track
+   - `aria-hidden="true"` on duplicate
+   - Hover pause
+   - Reduced motion pause
+
+3. **Stories 2.4 & 2.5**: About Section and Footer
+
+## Environment
+- `.env.local` - Contains placeholder Supabase credentials
+- Build passes with `npm run build`
+- Lint passes with `npm run lint`

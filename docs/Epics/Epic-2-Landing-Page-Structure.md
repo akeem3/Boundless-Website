@@ -89,7 +89,7 @@ Each section gets an `id` attribute matching its nav link for scroll-anchor navi
 
 **Video Background — Performance Implementation:**
 
-1. **Poster Image:** Ship a static `hero-poster.jpg` as the first paint element. Use `next/image` with `priority` prop to ensure it's the LCP element.
+1. **Poster Image:** Ship a static `hero-poster.svg` as the first paint element. Use `next/image` with `priority` prop to ensure it's the LCP element.
 
 2. **Lazy Video Mount:** The `<video>` element is only added to the DOM when the hero scrolls into view:
    ```tsx
@@ -131,7 +131,7 @@ Each section gets an `id` attribute matching its nav link for scroll-anchor navi
      loop
      playsInline
      preload="none"
-     poster="/hero-poster.jpg"
+     poster="/hero-poster.svg"
      className="absolute inset-0 w-full h-full object-cover"
    >
      <source src="/video/hero.webm" type="video/webm" />

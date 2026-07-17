@@ -1,10 +1,23 @@
+import { HeroSection } from "@/components/blocks/HeroSection";
+import { SponsorMarquee } from "@/components/blocks/SponsorMarquee";
+import { SessionsSection } from "@/components/blocks/SessionsSection";
+import { TournamentSection } from "@/components/blocks/TournamentSection";
+import { ShopSection } from "@/components/blocks/ShopSection";
+import { AboutSection } from "@/components/blocks/AboutSection";
+import { ContactSection } from "@/components/blocks/ContactSection";
+import { Footer } from "@/components/blocks/Footer";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">Boundless FC</h1>
-      <p className="mt-4 text-lg text-muted-foreground">
-        Coming soon...
-      </p>
-    </main>
+    <>
+      <HeroSection />
+      <SponsorMarquee />
+      <SessionsSection />
+      <TournamentSection />
+      <ShopSection />
+      <AboutSection />
+      <ContactSection />
+      <Footer />
+    </>
   );
 }
