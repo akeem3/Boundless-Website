@@ -3,11 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Menu } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS } from "@/lib/constants/nav";
 import { SITE_NAME, NAV_CTA_TEXT } from "@/lib/constants/copy";
@@ -25,9 +21,9 @@ export function Navbar() {
           <Image
             src="/logos/boundless-logo.svg"
             alt={SITE_NAME}
-            width={40}
-            height={37}
-            className="h-10 w-auto"
+            width={52}
+            height={48}
+            className="h-14 w-auto"
           />
         </div>
 
@@ -61,7 +57,10 @@ export function Navbar() {
           >
             <Menu className="h-6 w-6" />
           </SheetTrigger>
-          <SheetContent side="right" className="w-72 sm:max-w-sm p-0 bg-background border-border-subtle">
+          <SheetContent
+            side="right"
+            className="w-72 sm:max-w-sm p-0 bg-background border-border-subtle"
+          >
             <div className="flex flex-col gap-4 p-6">
               {NAV_LINKS.map((link) => (
                 <Link
