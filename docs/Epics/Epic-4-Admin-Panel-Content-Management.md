@@ -9,7 +9,7 @@
 
 ## Outcome Statement
 
-Build a password-protected admin panel at `/admin` that enables non-technical volunteer organizers to update tournaments, sessions, shop products, sponsors, contact settings, and view session registrations — all through Server Actions with the Supabase service role key, without touching code or exposing secrets to the client bundle.
+Build a password-protected admin panel at `/admin` that enables non-technical volunteer organizers to update tournaments, sessions, shop products, sponsors, and contact settings — all through Server Actions with the Supabase service role key, without touching code or exposing secrets to the client bundle. No data is collected on the public site.
 
 ---
 
@@ -20,8 +20,7 @@ Boundless FC has 4 volunteer organizers who are not technical. They need to:
 - Create/update weekly sessions
 - Manage the shop catalogue (add products, upload images, set prices)
 - Maintain the sponsor logo list
-- Update contact channels (WhatsApp number, email, Instagram URL)
-- View and confirm session registrations
+- Update contact channels (WhatsApp number, email, Instagram URL, session join Google Form URL)
 
 All mutations must go through Next.js Server Actions using the Supabase service role key server-side only. The anon key (client-exposed) is read-only via RLS policies.
 
@@ -68,13 +67,11 @@ if (isAdminRoute && !isLoginRoute) {
 - Shop Editor
 - Sponsors Editor
 - Contact Settings
-- Registrations
 
 ### 3. Dashboard (`src/app/admin/page.tsx`)
 
 - Quick links to all editors with icons
 - Last updated timestamps for each section
-- Recent registrations count (if available)
 
 ### 4. Tournament Editor (`src/app/admin/tournament/page.tsx`)
 
@@ -219,23 +216,11 @@ export async function deleteProduct(productId: string) {
 | Email Address | email input | `contact_settings.email_address` |
 | Default Email Subject | text input | `contact_settings.email_default_subject` |
 | Instagram URL | URL input | `contact_settings.instagram_url` |
+| Session Join URL | URL input | `contact_settings.session_join_url` |
 
 **Note:** This is a singleton record (always id = 'singleton'). Load on mount, save on submit.
 
-### 9. Registrations Viewer (`src/app/admin/registrations/page.tsx`)
-
-**Read-Only List:**
-- Table showing all `session_registrations` rows
-- Columns: Name, WhatsApp, Session Date, Payment Method, Status, Submitted At
-- Payment proof thumbnail (click to view full size)
-- Manual "Mark Confirmed" button per row
-
-**Implementation:**
-- Server Action to update `status` from 'pending' to 'confirmed'
-- Pagination if > 50 registrations
-- Filter by status (pending/confirmed/all)
-
-### 10. File Upload Security
+### 9. File Upload Security
 
 **Client-Side:**
 - Zod validation for file type and size
@@ -247,7 +232,7 @@ export async function deleteProduct(productId: string) {
 - File type validation via Storage API
 - Never trust client-side validation alone
 
-### 11. Server Actions Architecture
+### 10. Server Actions Architecture
 
 All mutations go through Next.js Server Actions:
 
@@ -258,7 +243,6 @@ src/app/actions/
   shop.ts          → saveProduct, deleteProduct, saveShopSettings
   sponsors.ts      → saveSponsor, deleteSponsor, reorderSponsors
   contact.ts       → saveContactSettings
-  registrations.ts → confirmRegistration
 ```
 
 **Security Rules:**
@@ -285,17 +269,14 @@ src/app/actions/
 | 10 | Image upload supports drag-to-reorder | Upload 3 images, reorder them, verify sort_order updates |
 | 11 | Sponsors editor manages logo list | Add sponsor, verify it appears in marquee |
 | 12 | Contact settings editor updates singleton record | Change WhatsApp number, verify it reflects in Contact section |
-| 13 | Registrations viewer shows session registrations | Submit registration via public form, verify it appears |
-| 14 | "Mark Confirmed" updates registration status | Click button, verify status changes to 'confirmed' |
-| 15 | Service role key never in client JS bundle | `grep -r "service_role" src/ --include='*.tsx' --include='*.ts'` — should only match server-side files |
-| 16 | All file uploads validated server-side | Try uploading invalid file type via curl, verify rejection |
+| 13 | Service role key never in client JS bundle | `grep -r "service_role" src/ --include='*.tsx' --include='*.ts'` — should only match server-side files |
+| 14 | All file uploads validated server-side | Try uploading invalid file type via curl, verify rejection |
 
 ---
 
 ## Out of Scope
 
 - Multi-admin roles/permissions (single admin role sufficient)
-- Automated payment verification (manual proof-of-payment only)
 - Real-time updates (polling or manual refresh sufficient)
 - Image optimization beyond `next/image` defaults
 
@@ -304,6 +285,5 @@ src/app/actions/
 ## Assumptions
 
 - A single Supabase Auth user will be created for the admin (email/password provided by organizers)
-- Supabase Storage buckets will be created: `payment-proofs`, `tournament-posters`, `product-images`, `sponsor-logos`
-- Organizers will supply Maybank account details and TouchNGo QR image for the Sessions payment step
+- Supabase Storage buckets will be created: `tournament-posters`, `product-images`, `sponsor-logos`
 - The admin panel is for internal use only — security hardening is sufficient, not enterprise-grade

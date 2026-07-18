@@ -63,7 +63,7 @@ export function HeroSection() {
     <section
       id="hero"
       ref={ref}
-      className="relative h-[calc(90vh-4.5rem)] overflow-hidden"
+      className="relative min-h-[80svh] overflow-hidden"
     >
       {/* Poster — always rendered, is LCP element */}
       <Image
@@ -94,21 +94,21 @@ export function HeroSection() {
       {/* Content - positioned vertically centered, slightly below */}
       <div className="absolute inset-x-0 top-0 z-10 flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-[800px] mt-32">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 leading-tight">
+          <div className="max-w-[800px] mt-32 sm:mt-24 md:mt-32 mx-auto sm:mx-0 text-center sm:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-4 sm:mb-6 leading-tight">
               {HERO_HEADLINE}
             </h1>
-            <p className="text-lg md:text-xl text-secondary mb-8 max-w-[600px]">
+            <p className="text-base sm:text-lg md:text-xl text-secondary mb-6 sm:mb-8 max-w-[600px] mx-auto sm:mx-0">
               {HERO_SUBHEAD}
             </p>
-            <div className="flex flex-col items-start gap-4">
+            <div className="flex flex-col items-center sm:items-start gap-3 sm:gap-4">
               <Link
                 href="#tournaments"
                 className={buttonVariants({ variant: "default", size: "xl" })}
               >
                 {HERO_CTA_TEXT}
               </Link>
-              <p className="text-sm text-foreground">{HERO_MICROCOPY}</p>
+              <p className="text-xs sm:text-sm text-foreground">{HERO_MICROCOPY}</p>
             </div>
           </div>
         </div>

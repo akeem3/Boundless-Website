@@ -9,7 +9,7 @@
 
 ## Outcome Statement
 
-Establish a fully configured, zero-cost project skeleton with a tokenized design system extracted from the finalized landing page design (`docs/Design/Landing Page.png`), enabling all subsequent epics to build UI components that are visually consistent, accessible, and mobile-first without hardcoding colors, copy, or external destinations.
+Establish a fully configured, zero-cost project skeleton with a tokenized design system extracted from the finalized landing page design (`docs/Design/Landing Page.svg`), enabling all subsequent epics to build UI components that are visually consistent, accessible, and mobile-first without hardcoding colors, copy, or external destinations.
 
 ---
 
@@ -86,7 +86,7 @@ public/
 
 ### 5. Design System (`globals.css`)
 
-**Extract from `docs/Design/Landing Page.png`:**
+**Extract from `docs/Design/Landing Page.svg`:**
 
 | Design Token | Hex Value | Semantic Name | Usage |
 |---|---|---|---|
@@ -163,8 +163,6 @@ CREATE TABLE session_registrations (
   session_id UUID REFERENCES sessions(id),
   name TEXT NOT NULL,
   whatsapp TEXT NOT NULL,
-  payment_method TEXT NOT NULL CHECK (payment_method IN ('maybank', 'tng')),
-  proof_url TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -219,7 +217,6 @@ CREATE TABLE site_settings (
 
 **RLS Policies:**
 - Public `SELECT` on `tournaments`, `sessions`, `products`, `product_images`, `sponsors`, `contact_settings`, `site_settings`
-- Public `INSERT` only on `session_registrations`
 - All `UPDATE`/`DELETE` restricted to authenticated admin role
 
 ### 7. Middleware

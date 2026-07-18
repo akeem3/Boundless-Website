@@ -38,8 +38,6 @@ CREATE TABLE session_registrations (
   session_id UUID REFERENCES sessions(id),
   name TEXT NOT NULL,
   whatsapp TEXT NOT NULL,
-  payment_method TEXT NOT NULL CHECK (payment_method IN ('maybank', 'tng')),
-  proof_url TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -82,7 +80,8 @@ CREATE TABLE contact_settings (
   whatsapp_find_team_message_template TEXT NOT NULL DEFAULT 'Hi Boundless! I''d like to join a team for {tournament_title} — I don''t have a full squad yet.',
   email_address TEXT NOT NULL,
   email_default_subject TEXT NOT NULL DEFAULT 'Question from the website',
-  instagram_url TEXT NOT NULL
+  instagram_url TEXT NOT NULL,
+  session_join_url TEXT
 );
 
 -- Site Settings (singleton row)
@@ -126,10 +125,6 @@ CREATE POLICY "Public read contact_settings" ON contact_settings
 
 CREATE POLICY "Public read site_settings" ON site_settings
   FOR SELECT USING (true);
-
--- Public insert for session_registrations only
-CREATE POLICY "Public insert session_registrations" ON session_registrations
-  FOR INSERT WITH CHECK (true);
 
 -- Admin all-access policies for authenticated role
 CREATE POLICY "Admin all tournaments" ON tournaments

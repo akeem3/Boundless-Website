@@ -5,7 +5,7 @@
 **Estimate:** 3 story points
 **Sprint:** 3
 **Dependencies:** Epic 1
-**Design Reference:** `docs/Design/Landing Page.png`
+**Design Reference:** `docs/Design/Landing Page.svg`
 
 ---
 

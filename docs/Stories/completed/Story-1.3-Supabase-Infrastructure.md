@@ -32,27 +32,25 @@ so that the application has a secure, version-controlled backend ready for featu
 |---|---|
 | `tournaments` | id, title, starts_at, location, fee_myr, description, rules, poster_url, registration_open, team_registration_url |
 | `sessions` | id, starts_at, location, note, capacity, spots_taken |
-| `session_registrations` | id, session_id, name, whatsapp, payment_method, proof_url, status |
+| `session_registrations` | id, session_id, name, whatsapp, status |
 | `products` | id, name, description, price_myr, sizes, sort_order, active, order_url |
 | `product_images` | id, product_id, image_url, sort_order |
 | `sponsors` | id, name, logo_url, sort_order, active |
-| `contact_settings` | id (singleton), whatsapp_number, whatsapp_generic_message, whatsapp_find_team_message_template, email_address, email_default_subject, instagram_url |
+| `contact_settings` | id (singleton), whatsapp_number, whatsapp_generic_message, whatsapp_find_team_message_template, email_address, email_default_subject, instagram_url, session_join_url |
 | `site_settings` | id (singleton), shop_order_url |
 
-- [x] CHECK constraints on `session_registrations.payment_method` (`maybank` or `tng`)
 - [x] CHECK constraints on `session_registrations.status` (`pending` or `confirmed`)
 - [x] CASCADE delete on `product_images.product_id`
 
 ### Row Level Security
 - [x] RLS enabled on all 8 tables
 - [x] Public SELECT on content tables (with `active`/`registration_open` filters)
-- [x] Public INSERT on `session_registrations` only
 - [x] Admin ALL on all tables for authenticated role
 
 ### Storage Buckets
-- [x] 4 buckets created: `payment-proofs`, `tournament-posters`, `product-images`, `sponsor-logos`
+- [x] 3 buckets created: `tournament-posters`, `product-images`, `sponsor-logos`
 - [x] File size limit: 5MB
-- [x] MIME type restrictions: images and PDFs
+- [x] MIME type restrictions: images only
 - [x] Authenticated upload policies
 - [x] Public read policies
 
@@ -99,8 +97,6 @@ CREATE TABLE session_registrations (
   session_id UUID REFERENCES sessions(id),
   name TEXT NOT NULL,
   whatsapp TEXT NOT NULL,
-  payment_method TEXT NOT NULL CHECK (payment_method IN ('maybank', 'tng')),
-  proof_url TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed')),
   created_at TIMESTAMPTZ DEFAULT now()
 );
@@ -166,9 +162,6 @@ CREATE POLICY "Public read sponsors" ON sponsors FOR SELECT USING (active = true
 CREATE POLICY "Public read contact_settings" ON contact_settings FOR SELECT USING (true);
 CREATE POLICY "Public read site_settings" ON site_settings FOR SELECT USING (true);
 
--- Public insert for session_registrations
-CREATE POLICY "Public insert session_registrations" ON session_registrations FOR INSERT WITH CHECK (true);
-
 -- Admin policies
 CREATE POLICY "Admin all tournaments" ON tournaments FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Admin all sessions" ON sessions FOR ALL USING (auth.role() = 'authenticated');
@@ -183,13 +176,11 @@ CREATE POLICY "Admin all site_settings" ON site_settings FOR ALL USING (auth.rol
 ### Storage Policies
 ```sql
 -- Authenticated uploads
-CREATE POLICY "Authenticated upload payment-proofs" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'payment-proofs' AND auth.role() = 'authenticated');
 CREATE POLICY "Authenticated upload tournament-posters" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'tournament-posters' AND auth.role() = 'authenticated');
 CREATE POLICY "Authenticated upload product-images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'product-images' AND auth.role() = 'authenticated');
 CREATE POLICY "Authenticated upload sponsor-logos" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'sponsor-logos' AND auth.role() = 'authenticated');
 
 -- Public read
-CREATE POLICY "Public read payment-proofs" ON storage.objects FOR SELECT USING (bucket_id = 'payment-proofs');
 CREATE POLICY "Public read tournament-posters" ON storage.objects FOR SELECT USING (bucket_id = 'tournament-posters');
 CREATE POLICY "Public read product-images" ON storage.objects FOR SELECT USING (bucket_id = 'product-images');
 CREATE POLICY "Public read sponsor-logos" ON storage.objects FOR SELECT USING (bucket_id = 'sponsor-logos');

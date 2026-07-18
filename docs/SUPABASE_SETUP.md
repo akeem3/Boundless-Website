@@ -65,7 +65,6 @@ SUPABASE_SERVICE_ROLE_KEY=your-secret-key-here
 
 | Bucket Name | Public | File Size Limit | Allowed MIME Types |
 |---|---|---|---|
-| `payment-proofs` | OFF (private) | 5 MB | image/*, application/pdf |
 | `tournament-posters` | OFF (private) | 5 MB | image/* |
 | `product-images` | OFF (private) | 5 MB | image/* |
 | `sponsor-logos` | OFF (private) | 5 MB | image/* |

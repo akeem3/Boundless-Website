@@ -15,7 +15,7 @@ Build the complete landing page skeleton with sticky navigation, hero section wi
 
 ## Problem Context
 
-The finalized landing page design (`docs/Design/Landing Page.png`) shows a single-page layout with 7 distinct sections in order: Nav → Hero → Marquee → Sessions → Tournaments → Shop → About → Contact → Footer. This epic builds the structural foundation (Nav, Hero, Marquee, About, Footer) and the shared layout patterns that Epic 3 will populate with dynamic content (Sessions, Tournaments, Shop, Contact). The hero section is the highest-risk element for performance — a looping background video must never block first paint on mid-range Android phones over 4G.
+The finalized landing page design (`docs/Design/Landing Page.svg`) shows a single-page layout with 7 distinct sections in order: Nav → Hero → Marquee → Sessions → Tournaments → Shop → About → Contact → Footer. This epic builds the structural foundation (Nav, Hero, Marquee, About, Footer) and the shared layout patterns that Epic 3 will populate with dynamic content (Sessions, Tournaments, Shop, Contact). The hero section is the highest-risk element for performance — a looping background video must never block first paint on mid-range Android phones over 4G.
 
 ---
 
@@ -80,7 +80,7 @@ Each section gets an `id` attribute matching its nav link for scroll-anchor navi
 
 ### 3. Hero Section (`src/components/blocks/HeroSection.tsx`)
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 - Full-viewport height (`min-h-screen`) with dark overlay on video
 - Headline: "Where 380+ players from 40+ countries on one pitch" (condensed display font, white)
 - Subhead: "Boundless FC is an open futsal community in KL — no trials, no fixed teams. Two sessions a week, a tournament every few months." (body font, gold/cream)
@@ -196,7 +196,7 @@ Each section gets an `id` attribute matching its nav link for scroll-anchor navi
 
 ### 5. About Section (`src/components/blocks/AboutSection.tsx`)
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 - Two-column on desktop: text left, image right
 - Single column stacked on mobile
 - Headline: "About — our journey" (condensed display font)
@@ -213,7 +213,7 @@ Each section gets an `id` attribute matching its nav link for scroll-anchor navi
 
 ### 6. Footer (`src/components/blocks/Footer.tsx`)
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 - Dark background matching nav (`#151F2B`)
 - Left: Logo + "© 2026 Boundless FC"
 - Right: Privacy, Terms, Instagram links

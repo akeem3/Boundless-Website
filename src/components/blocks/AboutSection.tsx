@@ -5,7 +5,7 @@ export function AboutSection() {
   return (
     <section id="about" className="py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 items-center">
           {/* Text Column */}
           <div className="md:col-span-5">
             <h2 className="text-3xl md:text-4xl text-foreground mb-6">

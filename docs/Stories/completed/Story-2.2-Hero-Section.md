@@ -5,7 +5,7 @@
 **Estimate:** 5 story points
 **Sprint:** 3
 **Dependencies:** Story 2.1
-**Design Reference:** `docs/Design/Landing Page.png`
+**Design Reference:** `docs/Design/Landing Page.svg`
 
 ---
 

@@ -1,12 +1,12 @@
 # Boundless FC — Build Prompt & Epic Breakdown for OpenCode Agent
 
-**Version 1.1** — updated to reflect: Tournament "Join with a team" and the whole Shop section now hand off to admin-configurable external links (Google Form / Notion form) instead of collecting data on-site; Tournament "Find a team" and all Contact channels are now direct deep links (WhatsApp, mailto, Instagram). See Epics 6, 7, 8, 9, 10 below for the changed scope.
+**Version 1.2** — updated to reflect: ALL CTAs across ALL sections now route externally (Google Forms, WhatsApp, etc.). No data is collected on this site — no internal forms, no payment flows. All external links are admin-configurable.
 
 ## How to use this document
 
 You (the coding agent) are building the Boundless FC website end to end. Before writing any code:
 
-1. You will be given `Landing_Page.png` — the finalized, pixel-accurate design of the full landing page. Treat it as ground truth for every visual detail: layout, spacing, type scale, colors, corner radii, section order. **Do not guess or invent any visual detail that is visible in the image.** If something is genuinely not shown in the image (e.g. a hover state, an admin screen, an error state), use the design tokens defined in Epic 1 to stay consistent, and note the assumption in your PR description.
+1. You will be given `Landing Page.svg` — the finalized, pixel-accurate design of the full landing page. Treat it as ground truth for every visual detail: layout, spacing, type scale, colors, corner radii, section order. **Do not guess or invent any visual detail that is visible in the image.** If something is genuinely not shown in the image (e.g. a hover state, an admin screen, an error state), use the design tokens defined in Epic 1 to stay consistent, and note the assumption in your PR description.
 2. Work through the epics below **in order**. Do not start Epic 2 until Epic 0 and Epic 1 are complete and committed. Each epic should be its own commit or small set of commits with a clear message.
 3. Read the accompanying `PRD.md` in full before starting — it defines the data model, the non-functional requirements, and the reasoning behind each dynamic section. This prompt tells you *how* to sequence the build; the PRD tells you *what* each piece must do.
 4. Budget constraint: **$0**. Only use services with a permanent free tier at this project's scale (Vercel Hobby, Supabase Free Plan). Do not add paid dependencies, paid fonts, or paid media CDNs.
@@ -54,7 +54,7 @@ You (the coding agent) are building the Boundless FC website end to end. Before 
 
 **Goal:** every color, spacing, radius, shadow, and font used anywhere in the app is a token defined once here. No component may use a raw hex value, an inline `style` color, or hardcoded copy string.
 
-- Study `Landing_Page.png` and extract the actual palette in use: the dark navy background, the warm cream/parchment surface (shop section), the amber/gold accent (CTAs, numerals), muted secondary text color, success/turf-green accent if present. Define these as semantic shadcn tokens under `:root` and `.dark` (even if the site only ships one theme initially, define both so the convention holds) — e.g. `--background`, `--foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--muted`, `--muted-foreground`, `--accent`, `--border`, `--card`, `--card-foreground`.
+- Study `Landing Page.svg` and extract the actual palette in use: the dark navy background, the warm cream/parchment surface (shop section), the amber/gold accent (CTAs, numerals), muted secondary text color, success/turf-green accent if present. Define these as semantic shadcn tokens under `:root` and `.dark` (even if the site only ships one theme initially, define both so the convention holds) — e.g. `--background`, `--foreground`, `--primary`, `--primary-foreground`, `--secondary`, `--muted`, `--muted-foreground`, `--accent`, `--border`, `--card`, `--card-foreground`.
 - Use OKLCH color values (Tailwind v4 / shadcn 2026 default) for perceptually-even contrast, not raw hex.
 - Expose new tokens to Tailwind via `@theme inline` so utilities like `bg-primary`, `text-muted-foreground`, `border-border` work project-wide.
 - Define the type scale (display/heading font for headlines matching the condensed poster-style type seen in the reference image, body font for paragraph text) as CSS variables (`--font-display`, `--font-sans`) loaded via `next/font` (self-hosted, not a runtime Google Fonts request — keeps it free and fast).
@@ -66,7 +66,7 @@ You (the coding agent) are building the Boundless FC website end to end. Before 
 
 ## Epic 2 — Global Layout: Nav + Footer
 
-- Build the sticky nav and footer exactly as shown in `Landing_Page.png`.
+- Build the sticky nav and footer exactly as shown in `Landing Page.svg`.
 - Mobile: nav collapses into a shadcn `Sheet` triggered by a hamburger icon. Verify no horizontal scroll or overlap at 360px width.
 - Nav links scroll-anchor to their matching section IDs on the single-page layout.
 
@@ -91,14 +91,11 @@ You (the coding agent) are building the Boundless FC website end to end. Before 
 
 ---
 
-## Epic 5 — Sessions Section + Join Flow
-
-This is the **only** section on the site with an internal form + payment step. Everything else (Epics 6 and 7) routes externally.
+## Epic 5 — Sessions Section
 
 - Render only the next upcoming `sessions` row.
-- "Join this Session" button → multi-step flow: registration form (React Hook Form + Zod) → payment step (shows Maybank account details + TouchNGo QR image, sourced from a `site_settings` record, not hardcoded) → file upload of payment proof to Supabase Storage → confirmation screen with a reference code.
+- "Join this Session" button → opens the admin-set **Session join URL** (external Google Form) in a new tab. If no URL is set, render the button in a disabled state with "Coming soon" label.
 - "Join the WhatsApp group" is a plain `wa.me` link built from `contact_settings.whatsapp_number` and a generic pre-filled message (see Epic 8 for the shared link-building helper) — no form, styled with lower visual weight than the primary CTA.
-- Persist registrations to `session_registrations` with `status: 'pending'`.
 
 ---
 
@@ -141,24 +138,21 @@ This is the **only** section on the site with an internal form + payment step. E
 
 - `/admin/login` — Supabase Auth email/password sign-in.
 - `middleware.ts` protects all `/admin/*` routes except `/admin/login`, redirecting unauthenticated requests.
-- `/admin` dashboard with links to: Tournament editor, Sessions editor, Shop editor, Sponsors editor, Contact settings editor, Registrations viewer.
+- `/admin` dashboard with links to: Tournament editor, Sessions editor, Shop editor, Sponsors editor, Contact settings editor.
 - **Tournament editor**: single-record form bound to the `tournaments` schema — title, date/time, location, fee, description, rules, poster upload, registration_open toggle, and the **Team registration URL** field (plain text/URL input, e.g. their Google Form link). Poster upload goes to Supabase Storage; store the resulting public URL.
 - **Sessions editor**: create/update the next session's date, time, note, capacity.
 - **Shop editor**: full CRUD list + form for `products` (name, description, price, sizes, multi-image uploader with drag-to-reorder setting `product_images.sort_order`, and an optional per-product `order_url` override). Also exposes the section-level `site_settings.shop_order_url` field for the default catalogue-wide order link.
 - **Sponsors editor**: CRUD list for `sponsors` (name, logo upload, active toggle, sort order).
-- **Contact settings editor**: single-record form for `contact_settings` (WhatsApp number, generic WhatsApp message, find-a-team message template, email address, default email subject, Instagram URL).
-- **Registrations viewer**: read-only list of **session registrations only** (the only on-site submission flow remaining) — payment-proof thumbnail per submission, with a manual "Mark confirmed" action.
+- **Contact settings editor**: single-record form for `contact_settings` (WhatsApp number, generic WhatsApp message, find-a-team message template, email address, default email subject, Instagram URL, session join Google Form URL).
 - All mutations go through Next.js Server Actions using the Supabase service role key server-side only — verify the service role key never appears in any client-shipped JS bundle.
 
 ---
 
-## Epic 10 — Payments Integration (Maybank + TouchNGo) — Sessions only
+## Epic 10 — Session Join URL Configuration
 
-> **Scope change from v1.0:** this epic now applies only to the Sessions join flow (Epic 5). Tournament and Shop no longer have an on-site payment step — see Epics 6 and 7.
-
-- No payment gateway API — this is manual, proof-of-payment based, per PRD Section 8 (Out of Scope: automated verification).
-- Build a `<PaymentStep>` component, used by the Sessions join flow, that: shows a summary of what's owed, tabs between "Maybank transfer" (account name/number/reference code) and "TouchNGo QR" (QR image), and a file upload control for the proof screenshot/receipt (image or PDF, size-limited).
-- Account details and QR image are placeholders until the organisers supply real ones (flagged in PRD Section 9) — implement them as `site_settings` fields, not hardcoded inline in the component, so swapping them later requires no code change.
+- Add a **Session join URL** field to the Contact settings editor (or `site_settings`) — this is the external Google Form URL that the "Join this Session" button links to.
+- The Sessions section reads this URL and renders the CTA accordingly: if set, open in new tab; if not set, disabled with "Coming soon".
+- No payment step, no internal form, no data collection.
 
 ---
 
@@ -175,8 +169,7 @@ This is the **only** section on the site with an internal form + payment step. E
 
 ## Epic 12 — Security Hardening
 
-- Verify RLS policies exist and are correct for every table per PRD Section 6 (public read on active/open content, public insert only on `session_registrations`, all writes elsewhere admin-only).
-- Add basic rate-limiting (e.g. a simple IP+timestamp check in the server action, or Vercel's built-in protections) to the `session_registrations` insert endpoint to prevent spam submissions.
+- Verify RLS policies exist and are correct for every table per PRD Section 6 (public read on active/open content, all writes admin-only).
 - Validate file uploads server-side (mimetype allow-list, max size) in addition to client-side Zod validation — never trust the client alone.
 - Confirm all environment secrets are only referenced in server-side files (`lib/supabase/server.ts`, server actions, route handlers) and never in files that ship to the browser.
 
@@ -186,13 +179,13 @@ This is the **only** section on the site with an internal form + payment step. E
 
 - Final production deploy to Vercel (Hobby). Confirm environment variables are set in the Vercel project settings, not just locally.
 - Confirm Supabase project is on the Free Plan with the migrations from `supabase/migrations/` applied.
-- Document the deploy process and environment variable list in a `README.md` at the project root for the organisers' future reference (they are non-technical, so keep this plain-language). Include a short note on where to paste the real Google/Notion form links, WhatsApp number, and Maybank/TouchNGo details once the organisers supply them (per PRD Section 9).
+- Document the deploy process and environment variable list in a `README.md` at the project root for the organisers' future reference (they are non-technical, so keep this plain-language). Include a short note on where to paste the real Google/Notion form links, WhatsApp number, and Instagram handle once the organisers supply them (per PRD Section 9).
 
 ---
 
 ## General rules that apply across every epic
 
-- Match `Landing_Page.png` exactly for anything it shows. Ask (leave a `// ASSUMPTION:` comment) rather than guess for anything it doesn't show.
+- Match `Landing Page.svg` exactly for anything it shows. Ask (leave a `// ASSUMPTION:` comment) rather than guess for anything it doesn't show.
 - No hardcoded color values or copy strings anywhere outside `globals.css` and `lib/constants/`. This includes external destinations — WhatsApp numbers, email addresses, Instagram URLs, and Google/Notion form links all come from `contact_settings`/`site_settings`/`tournaments`/`products`, never typed directly into a component.
 - Mobile-first: write the base (no-prefix) Tailwind classes for the smallest viewport first, then layer `md:`/`lg:` overrides — never the reverse.
 - Every animated/autoplaying element (hero video, marquee, shop carousel) must respect `prefers-reduced-motion: reduce`.

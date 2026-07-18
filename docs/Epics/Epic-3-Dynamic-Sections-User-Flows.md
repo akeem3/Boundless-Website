@@ -9,7 +9,7 @@
 
 ## Outcome Statement
 
-Build the four dynamic content sections (Sessions, Tournaments, Shop, Contact) with their respective user flows — the only internal form+payment flow (Sessions), and external hand-off patterns (Tournaments, Shop) — all driven by Supabase data and admin-configurable, with shared link-building helpers that ensure zero hardcoded external URLs.
+Build the four dynamic content sections (Sessions, Tournaments, Shop, Contact) with their respective user flows — all external hand-off patterns driven by Supabase data and admin-configurable, with shared link-building helpers that ensure zero hardcoded external URLs. No data is collected on this site.
 
 ---
 
@@ -17,12 +17,12 @@ Build the four dynamic content sections (Sessions, Tournaments, Shop, Contact) w
 
 The landing page has four sections that pull data from Supabase and drive user actions:
 
-1. **Sessions** — the ONLY section with an internal form + payment step (Maybank/TouchNGo proof-of-payment). All other sections route externally.
+1. **Sessions** — displays the next upcoming session with two external CTAs (Google Form for registration, WhatsApp for group join). All links are admin-configurable.
 2. **Tournaments** — displays the active tournament with two CTAs that route to external channels (Google Form for team registration, WhatsApp for find-a-team).
 3. **Shop** — browsable product catalogue with image carousels that routes to an external order form.
 4. **Contact** — three clickable cards (WhatsApp, Email, Instagram) that deep-link directly to real destinations.
 
-The key architectural decision: **only Sessions collects data on-site**. Tournaments, Shop, and Contact are pure display + external hand-off. This simplifies the data model, reduces security surface, and aligns with how the organizers already work (Google Forms, WhatsApp, external order forms).
+The key architectural decision: **no data is collected on this site**. All sections route externally. This simplifies the data model, reduces security surface, and aligns with how the organizers already work (Google Forms, WhatsApp, external order forms).
 
 ---
 
@@ -82,6 +82,7 @@ export function buildProductOrderLink(
 **Reuse across components:**
 - Contact section → `buildGenericWhatsAppLink`, `buildEmailLink`, direct Instagram link
 - Sessions "Join WhatsApp group" → `buildGenericWhatsAppLink`
+- Sessions "Join this Session" → reads `contact_settings.session_join_url` directly
 - Tournament "Find a team" → `buildFindTeamLink`
 - Shop "View and order" → `buildProductOrderLink`
 
@@ -98,7 +99,7 @@ const { data } = await supabase
   .single();
 ```
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 - Section headline: "Weekly Sessions"
 - Subtext: "Two ways in — join the group chat, or come straight to the next session below."
 - Session card with:
@@ -107,42 +108,11 @@ const { data } = await supabase
   - CTA: "Join this Session" button (orange, primary)
 - Secondary link: "Join the WhatsApp group" (top-right of section, lower visual weight)
 
-**"Join this Session" — Multi-Step Flow:**
-
-This is the ONLY internal form on the site. Implementation:
-
-**Step 1: Registration Form (`src/components/admin/SessionRegistrationForm.tsx`)**
-- React Hook Form + Zod validation
-- Fields: Name (text, required, min 2 chars), WhatsApp Number (text, required, min 10 chars)
-- Zod schema in `src/lib/validations/session.ts`:
-  ```typescript
-  import { z } from "zod";
-  
-  export const sessionRegistrationSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    whatsapp: z.string().min(10, "Please enter a valid WhatsApp number"),
-    payment_method: z.enum(["maybank", "tng"]),
-    proof_url: z.string().url("Please upload your payment proof"),
-  });
-  
-  export type SessionRegistrationInput = z.infer<typeof sessionRegistrationSchema>;
-  ```
-
-**Step 2: Payment Step (`src/components/admin/PaymentStep.tsx`)**
-- Tabs (shadcn `Tabs`) between Maybank transfer and TouchNGo QR
-- **Maybank tab:** Account name, account number, reference code — all from `site_settings` table, NOT hardcoded
-- **TouchNGo tab:** QR image from `site_settings` table
-- File upload control for payment proof (image or PDF, max 5MB)
-- Upload to Supabase Storage bucket `payment-proofs`
-
-**Step 3: Confirmation Screen**
-- Show success message with generated reference code
-- Display registration details summary
-- "Your registration is pending confirmation. You'll receive a WhatsApp message once verified."
-
-**Data Persistence:**
-- Insert into `session_registrations` with `status: 'pending'`
-- Store `proof_url` from Supabase Storage upload
+**"Join this Session" — External Link:**
+- Reads `contact_settings.session_join_url` (admin-configurable Google Form URL)
+- If URL is set: opens in new tab with `target="_blank" rel="noopener noreferrer"`
+- If URL is null: disabled button with "Coming soon" label
+- No internal form, no payment step, no data collection
 
 **"Join the WhatsApp group" Link:**
 - Uses `buildGenericWhatsAppLink(contact)` from shared helpers
@@ -162,7 +132,7 @@ const { data } = await supabase
   .single();
 ```
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 
 **Desktop:** Two columns
 - Left column: Headline + icon rows + description + CTAs
@@ -237,7 +207,7 @@ const { data: siteSettings } = await supabase
   .single();
 ```
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 - Section headline: "Shop"
 - Subtext: "Add your name and number free — the shirt is printed either way."
 - Product grid: 3 columns desktop, 2 tablet, 1 mobile
@@ -275,7 +245,7 @@ const { data: contact } = await supabase
   .single();
 ```
 
-**Layout (from `docs/Design/Landing Page.png`):**
+**Layout (from `docs/Design/Landing Page.svg`):**
 - Section headline: "Contact"
 - Subtext: "reach us directly."
 - Three clickable cards in a row (stacks on mobile)
@@ -307,25 +277,23 @@ const { data: contact } = await supabase
 | # | Criterion | Verification |
 |---|---|---|
 | 1 | Sessions section shows only next upcoming session | Create test session in past/future, verify correct one displays |
-| 2 | "Join this Session" opens multi-step form | Click button, verify form → payment → confirmation flow |
-| 3 | Payment step shows details from `site_settings` | Update `site_settings` in Supabase, verify display changes |
-| 4 | Payment proof uploads to Supabase Storage | Upload file, verify it appears in Storage bucket |
-| 5 | Registration persists to `session_registrations` with `status: 'pending'` | Check Supabase table after submission |
-| 6 | "Join WhatsApp group" opens `wa.me` link | Click link, verify WhatsApp opens with correct message |
-| 7 | Tournament section shows active tournament | Check `tournaments` table, verify correct row displays |
-| 8 | "Join with a team" links to `team_registration_url` | Set URL in admin, verify link works |
-| 9 | "Join with a team" shows disabled state when URL is null | Clear URL in admin, verify disabled button with "coming soon" |
-| 10 | "Find a team" opens `wa.me` with tournament-specific message | Verify message contains tournament title |
-| 11 | Shop grid shows 3/2/1 columns at desktop/tablet/mobile | Test at 1440px, 768px, 375px |
-| 12 | Product carousel auto-advances every ~3.5s | Watch carousel, verify timing |
-| 13 | Carousel pauses on user interaction | Drag carousel, verify autoplay stops |
-| 14 | Carousel does NOT autoplay under `prefers-reduced-motion` | Toggle OS setting, verify no autoplay |
-| 15 | "View and order" links to product `order_url` or shop-level URL | Test both scenarios |
-| 16 | "View and order" shows disabled "Coming soon" when no URL set | Clear all order URLs, verify disabled state |
-| 17 | Contact cards are fully clickable | Click each card, verify correct destination |
-| 18 | WhatsApp links use shared helper, not hardcoded URLs | Grep for `wa.me` in components — should only be in `lib/links/` |
-| 19 | Email links use shared helper, not hardcoded URLs | Grep for `mailto:` in components — should only be in `lib/links/` |
-| 20 | All external links open in new tab with `rel="noopener noreferrer"` | Inspect link elements |
+| 2 | "Join this Session" opens external Google Form | Set URL in admin, verify link opens in new tab |
+| 3 | "Join this Session" shows disabled state when URL is null | Clear URL in admin, verify disabled button with "coming soon" |
+| 4 | "Join WhatsApp group" opens `wa.me` link | Click link, verify WhatsApp opens with correct message |
+| 5 | Tournament section shows active tournament | Check `tournaments` table, verify correct row displays |
+| 6 | "Join with a team" links to `team_registration_url` | Set URL in admin, verify link works |
+| 7 | "Join with a team" shows disabled state when URL is null | Clear URL in admin, verify disabled button with "coming soon" |
+| 8 | "Find a team" opens `wa.me` with tournament-specific message | Verify message contains tournament title |
+| 9 | Shop grid shows 3/2/1 columns at desktop/tablet/mobile | Test at 1440px, 768px, 375px |
+| 10 | Product carousel auto-advances every ~3.5s | Watch carousel, verify timing |
+| 11 | Carousel pauses on user interaction | Drag carousel, verify autoplay stops |
+| 12 | Carousel does NOT autoplay under `prefers-reduced-motion` | Toggle OS setting, verify no autoplay |
+| 13 | "View and order" links to product `order_url` or shop-level URL | Test both scenarios |
+| 14 | "View and order" shows disabled "Coming soon" when no URL set | Clear all order URLs, verify disabled state |
+| 15 | Contact cards are fully clickable | Click each card, verify correct destination |
+| 16 | WhatsApp links use shared helper, not hardcoded URLs | Grep for `wa.me` in components — should only be in `lib/links/` |
+| 17 | Email links use shared helper, not hardcoded URLs | Grep for `mailto:` in components — should only be in `lib/links/` |
+| 18 | All external links open in new tab with `rel="noopener noreferrer"` | Inspect link elements |
 
 ---
 
@@ -333,14 +301,14 @@ const { data: contact } = await supabase
 
 - Tournament registration forms (delegated to external Google Form)
 - Shop order forms (delegated to external order form)
-- Payment gateway integration (manual proof-of-payment only)
+- Session registration forms (delegated to external Google Form)
+- Any on-site data collection — all CTAs route externally
 - Product order data collection (external form only)
 
 ---
 
 ## Assumptions
 
-- Maybank account details and TouchNGo QR image will be supplied by organizers (stored in `site_settings`)
 - External Google/Notion form URLs will be entered via admin panel post-launch
 - WhatsApp number, email address, and Instagram handle will be confirmed before launch
 - Product photography will be uploaded to Supabase Storage via admin panel

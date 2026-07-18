@@ -6,13 +6,6 @@
 -- AUTHENTICATED UPLOAD POLICIES
 -- =====================================================
 
--- payment-proofs bucket
-CREATE POLICY "Authenticated upload payment-proofs" ON storage.objects
-  FOR INSERT WITH CHECK (
-    bucket_id = 'payment-proofs'
-    AND auth.role() = 'authenticated'
-  );
-
 -- tournament-posters bucket
 CREATE POLICY "Authenticated upload tournament-posters" ON storage.objects
   FOR INSERT WITH CHECK (
@@ -37,9 +30,6 @@ CREATE POLICY "Authenticated upload sponsor-logos" ON storage.objects
 -- =====================================================
 -- PUBLIC READ POLICIES
 -- =====================================================
-
-CREATE POLICY "Public read payment-proofs" ON storage.objects
-  FOR SELECT USING (bucket_id = 'payment-proofs');
 
 CREATE POLICY "Public read tournament-posters" ON storage.objects
   FOR SELECT USING (bucket_id = 'tournament-posters');

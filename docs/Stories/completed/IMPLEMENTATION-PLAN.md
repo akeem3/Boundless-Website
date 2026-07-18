@@ -18,7 +18,7 @@
 | Middleware | DONE | Verify it works |
 | Supabase clients | DONE | Need real credentials |
 | globals.css | DEFAULT THEME | Replace with brand colors |
-| Fonts | GEIST DEFAULT | Replace with Oswald + Inter |
+| Fonts | GEIST DEFAULT | Replace with Inter |
 | shadcn components | ONLY BUTTON | Install 13 more |
 | Supabase project | NOT CREATED | Create project |
 | Database schema | NOT CREATED | Create migration |
@@ -130,33 +130,26 @@
 - [ ] Verify `@theme inline` block maps all variables correctly
 
 ### 2.2.2 — Replace Fonts
-- [ ] Update `src/app/layout.tsx` to import Oswald + Inter:
+- [ ] Update `src/app/layout.tsx` to import Inter:
 
 ```tsx
-import { Inter, Oswald } from "next/font/google";
+import { Inter } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
-
-const oswald = Oswald({
-  subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["400", "600", "700"],
-});
 ```
 
-- [ ] Update HTML className to use new font variables:
+- [ ] Update HTML className to use new font variable:
 ```tsx
-<html lang="en" className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
+<html lang="en" className={`${inter.variable} h-full antialiased`}>
 ```
 
 - [ ] Update `globals.css` `@theme inline` to map fonts:
 ```css
 @theme inline {
   --font-sans: var(--font-sans);
-  --font-display: var(--font-display);
 }
 ```
 
@@ -185,17 +178,16 @@ npx shadcn@latest add card input textarea select label form dialog sheet carouse
   - sonner
 
 ### 2.2.4 — Verify Design System
-- [ ] Create test component with `className="bg-primary text-primary-foreground"` — verify orange background, white text
+- [ ] Create test component with `className="bg-primary text-primary-foreground"` — verify orange background, cream text
 - [ ] Create test component with `className="text-foreground"` — verify gold/cream text
 - [ ] Create test component with `className="border-border"` — verify dark border
-- [ ] Create test component with `className="font-display"` — verify Oswald font
 - [ ] Create test component with `className="font-sans"` — verify Inter font
 - [ ] Grep `src/components/` for raw hex codes — zero matches expected
 - [ ] Run `npm run build` — zero errors expected
 
 **Exit Criteria:**
 - All brand colors applied in globals.css
-- Oswald + Inter fonts loaded via next/font
+- Inter font loaded via next/font
 - All 14 shadcn components installed
 - `npm run build` succeeds
 - Zero hardcoded hex values in components
@@ -234,7 +226,6 @@ SUPABASE_SERVICE_ROLE_KEY=your-real-service-role-key
 
 ### 3.3.4 — Create Storage Buckets
 - [ ] Go to Supabase Dashboard > Storage
-- [ ] Create bucket `payment-proofs` (private, 5MB limit, allow: image/*, application/pdf)
 - [ ] Create bucket `tournament-posters` (private, 5MB limit, allow: image/*)
 - [ ] Create bucket `product-images` (private, 5MB limit, allow: image/*)
 - [ ] Create bucket `sponsor-logos` (private, 5MB limit, allow: image/*)
@@ -279,7 +270,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-real-service-role-key
 - [ ] `npm run build` succeeds with zero errors
 - [ ] `npm run lint` succeeds with zero errors
 - [ ] All brand colors applied (no default oklch theme)
-- [ ] Oswald + Inter fonts loaded
+- [ ] Inter font loaded
 - [ ] All 14 shadcn components installed
 - [ ] Supabase project connected with real credentials
 - [ ] All 8 tables created

@@ -2,10 +2,10 @@
 
 **Version:** 1.1
 **Status:** Ready for build
-**Reference design:** `Landing_Page.png` (finalized, pixel reference — see Section 4 for per-section rules)
+**Reference design:** `Landing Page.svg` (finalized, pixel reference — see Section 4 for per-section rules)
 **Budget constraint:** $0. Every service used must run on a permanent free tier (Vercel Hobby, Supabase Free Plan). No paid CDNs, no paid video hosts, no paid fonts.
 
-**Changelog:** v1.1 — Tournament "Join with a team" and the entire Shop section now route to admin-configurable **external links** (Google Form / Notion form) instead of an internal registration + payment flow. Tournament "Find a team" now deep-links to WhatsApp with an auto-filled message, reusing the same WhatsApp number as the Contact section. Contact section channels (WhatsApp, Email, Instagram) are now each directly clickable/deep-linked. Sessions remain the only flow with an internal form + Maybank/TouchNGo payment step. See Sections 4.5, 4.6, 4.7, 5, 6, 8 for details.
+**Changelog:** v1.2 — Sessions no longer have an internal form or payment step. All CTAs across all sections now route to external links (Google Forms, WhatsApp, etc.), all admin-configurable. No data is collected on this site. See Sections 4.4–4.7, 5, 6, 8 for details.
 
 ---
 
@@ -17,7 +17,7 @@ This is not a content-heavy CMS. It is one public landing page backed by a small
 
 ## 2. Goals
 
-1. Convert visitors into session attendees with minimal on-site friction (form → payment proof → confirmation), and into tournament/shop leads by routing them cleanly to the organisers' existing external forms.
+1. Convert visitors into session attendees and tournament/shop leads by routing them cleanly to the organisers' existing external forms — no data is collected on this site.
 2. Let non-technical organisers update the active tournament, its external registration link, the shop catalogue, and contact channels themselves.
 3. Load fast and look correct on a mid-range Android phone on 4G — the majority of the audience is mobile.
 4. Cost nothing to run at current scale.
@@ -30,7 +30,7 @@ This is not a content-heavy CMS. It is one public landing page backed by a small
 | UI components | shadcn/ui (Radix + Tailwind) | Owned code, accessible primitives, themeable via CSS variables |
 | Styling | Tailwind CSS v4 + CSS variables in `globals.css` | Single source of truth for the design system, no hardcoded colors |
 | Carousel | Embla Carousel (+ `embla-carousel-autoplay` plugin) | Same engine shadcn's own carousel is built on; lightweight, no license cost |
-| Forms | React Hook Form + Zod | Type-safe validation for the Sessions registration form and all admin forms |
+| Forms | React Hook Form + Zod | Type-safe validation for all admin forms |
 | Backend | Supabase (Postgres, Auth, Storage) | Free tier covers this scale; RLS gives per-table security without a custom API layer |
 | Hosting | Vercel (Hobby) | Free, native Next.js support, automatic image optimization |
 | Media | Self-hosted, ffmpeg-compressed MP4/WebM in Supabase Storage or `/public` | No paid video CDN allowed by budget constraint |
@@ -38,7 +38,7 @@ This is not a content-heavy CMS. It is one public landing page backed by a small
 
 ## 4. Section-by-Section Requirements
 
-> The build agent must treat `Landing_Page.png` as the literal source of truth for layout, spacing, type scale, and color for every section below. Nothing visual should be invented; where this PRD is silent on a visual detail, the screenshot decides.
+> The build agent must treat `Landing Page.svg` as the literal source of truth for layout, spacing, type scale, and color for every section below. Nothing visual should be invented; where this PRD is silent on a visual detail, the screenshot decides.
 
 ### 4.1 Navigation
 - Logo + crest, left. Links: Sessions, Tournaments, Shop, About, Contact, center/right. "Join a session" button, right.
@@ -62,7 +62,7 @@ This is not a content-heavy CMS. It is one public landing page backed by a small
 
 ### 4.4 Sessions
 - Shows only the **next upcoming session** (not a recurring schedule statement) — date, time block, location, short note, capacity indicator.
-- Single CTA: "Join this Session" → registration form → payment step (Maybank transfer details + TouchNGo QR) → proof-of-payment upload → confirmation screen. This is the **only** internal form + payment flow in the whole site. This is the only session-related CTA on the page; do not duplicate a "join" CTA elsewhere for sessions.
+- Single CTA: "Join this Session" → opens an external Google Form (admin-configurable URL) in a new tab. If no URL is set, the button is disabled with a "Coming soon" label.
 - Secondary, low-emphasis option in the same section: "Join the WhatsApp group" — a direct `wa.me` link (see 4.7 for the shared WhatsApp number), no form.
 
 ### 4.5 Tournament (single active tournament template)
@@ -120,8 +120,7 @@ One tournament is "active" at a time and is rendered from a single Supabase row 
   - **Sessions editor** — create/update the next session's date, time, note, capacity.
   - **Shop editor** — CRUD for products (name, description, price, sizes, multi-image uploader with drag-to-reorder), plus the section-level **Shop order URL** field and the optional per-product `order_url` override.
   - **Sponsors editor** — CRUD for the marquee logo list.
-  - **Contact settings editor** — single record: WhatsApp number, generic WhatsApp message template, tournament find-a-team message template, email address, default email subject, Instagram URL.
-  - **Registrations viewer** — read-only list of **session** registrations only (the only flow that still collects data on-site), with a payment-proof thumbnail and a manual "mark confirmed" action.
+  - **Contact settings editor** — single record: WhatsApp number, generic WhatsApp message template, tournament find-a-team message template, email address, default email subject, Instagram URL, session join Google Form URL.
 - All writes go through Next.js Server Actions calling Supabase with the service role key on the server only — the anon key (client-exposed) is read-only via RLS policies.
 
 ## 6. Data Model (Supabase / Postgres)
@@ -130,7 +129,7 @@ One tournament is "active" at a time and is rendered from a single Supabase row 
 |---|---|
 | `tournaments` | id, title, starts_at, location, fee_myr, description, rules, poster_url, registration_open (bool), team_registration_url (text, nullable), created_at |
 | `sessions` | id, starts_at, location, note, capacity, spots_taken, created_at |
-| `session_registrations` | id, session_id, name, whatsapp, payment_method, proof_url, status, created_at |
+| `session_registrations` | id, session_id, name, whatsapp, status, created_at |
 | `products` | id, name, description, price_myr, sizes (text[]), sort_order, active (bool), order_url (text, nullable — overrides shop-level link when set), created_at |
 | `product_images` | id, product_id, image_url, sort_order |
 | `sponsors` | id, name, logo_url, sort_order, active (bool) |
@@ -138,7 +137,7 @@ One tournament is "active" at a time and is rendered from a single Supabase row 
 | `site_settings` | id (singleton row), shop_order_url |
 | `admin_users` | managed via Supabase Auth, no custom table needed for a single admin |
 
-RLS: public `select` allowed on `tournaments`, `sessions`, `products`, `product_images`, `sponsors`, `contact_settings`, `site_settings` where applicable (`active`/`registration_open` filters as relevant); public `insert` allowed only on `session_registrations` (rate-limited); all `update`/`delete` restricted to the authenticated admin role.
+RLS: public `select` allowed on `tournaments`, `sessions`, `products`, `product_images`, `sponsors`, `contact_settings`, `site_settings` where applicable (`active`/`registration_open` filters as relevant); all `update`/`delete` restricted to the authenticated admin role.
 
 **Removed from v1.0:** `tournament_team_registrations`, `tournament_find_a_team`, and `product_orders` tables are no longer needed — tournament team registration happens on the organisers' external form, tournament find-a-team happens over WhatsApp, and shop orders happen on the external shop order form. None of these need to be captured or stored by this site.
 
@@ -154,16 +153,14 @@ RLS: public `select` allowed on `tournaments`, `sessions`, `products`, `product_
 
 ## 8. Out of Scope (v1)
 
-- Automated payment verification/webhooks for Sessions (Maybank transfer + TouchNGo QR are manual, proof-of-payment based).
-- Any on-site data collection for tournament registration, find-a-team matching, or shop orders — these are intentionally delegated to external forms/WhatsApp per Sections 4.5–4.6.
+- Any on-site data collection for session registration, tournament registration, find-a-team matching, or shop orders — these are all intentionally delegated to external forms/WhatsApp per Sections 4.4–4.6.
 - Multi-admin roles/permissions.
 - Multi-language support.
 - Native mobile app.
 
 ## 9. Open Assumptions to Confirm Before Build
 
-- Exact Maybank account details and TouchNGo QR image to be supplied by the organisers before the Sessions payment step is built.
 - Final hero video footage must be supplied and will need ffmpeg compression per Section 4.2 before integration.
 - Real product photography for the shop is still pending (currently placeholder in the wireframe) — the build should support any number of images per product regardless of when photography is delivered.
-- The actual Google/Notion form URLs (tournament team registration, shop orders) will be supplied by the organisers and entered via the admin panel post-launch — the build should treat these as empty/nullable at launch and handle that state gracefully (disabled button + "coming soon" label) rather than assuming a placeholder URL.
+- The actual Google/Notion form URLs (tournament team registration, shop orders, session join) will be supplied by the organisers and entered via the admin panel post-launch — the build should treat these as empty/nullable at launch and handle that state gracefully (disabled button + "coming soon" label) rather than assuming a placeholder URL.
 - WhatsApp number, email address, and Instagram handle to be confirmed as final before the Contact settings record is seeded.
