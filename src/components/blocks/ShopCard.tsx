@@ -68,6 +68,9 @@ export function ProductCard({
 
       <div className="p-4 space-y-2 bg-foreground border-t border-background/10">
         <h3 className="text-background font-semibold">{product.name}</h3>
+        <p className="text-primary text-base font-bold">
+          RM {product.price_myr}
+        </p>
         {product.sizes && product.sizes.length > 0 && (
           <p className="text-background/70 text-xs">
             {product.sizes.join(", ")}

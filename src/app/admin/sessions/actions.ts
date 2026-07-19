@@ -39,6 +39,7 @@ export async function createSession(formData: {
   }
 
   revalidatePath("/admin/sessions");
+  revalidatePath("/");
   return { success: true };
 }
 
@@ -70,6 +71,7 @@ export async function updateSession(
   }
 
   revalidatePath("/admin/sessions");
+  revalidatePath("/");
   return { success: true };
 }
 
@@ -83,5 +85,6 @@ export async function deleteSession(id: string) {
   }
 
   revalidatePath("/admin/sessions");
+  revalidatePath("/");
   return { success: true };
 }
