@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   title: "Boundless FC",
   description:
     "An open futsal community in KL — no trials, no fixed teams. Two sessions a week, a tournament every few months.",
+  icons: {
+    icon: "/logos/boundless-browser-logo.png",
+  },
 };
 
 export default function RootLayout({

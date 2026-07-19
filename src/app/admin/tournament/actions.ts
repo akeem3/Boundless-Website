@@ -31,7 +31,6 @@ export async function saveTournament(formData: {
   location: string;
   fee_myr: number;
   description: string;
-  rules: string;
   poster_url: string;
   registration_open: boolean;
   team_registration_url: string;
@@ -60,7 +59,6 @@ export async function saveTournament(formData: {
     location: formData.location,
     fee_myr: formData.fee_myr,
     description: formData.description || null,
-    rules: formData.rules || null,
     poster_url: formData.poster_url || null,
     registration_open: formData.registration_open,
     team_registration_url: formData.team_registration_url || null,

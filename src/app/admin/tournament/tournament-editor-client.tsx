@@ -19,7 +19,6 @@ const tournamentSchema = z.object({
   location: z.string().min(1, "Location is required"),
   fee_myr: z.string().min(1, "Fee is required"),
   description: z.string().optional(),
-  rules: z.string().optional(),
   poster_url: z.string().optional(),
   registration_open: z.boolean(),
   team_registration_url: z.string().optional(),
@@ -35,7 +34,6 @@ interface TournamentEditorClientProps {
     location: string;
     fee_myr: number;
     description: string | null;
-    rules: string | null;
     poster_url: string | null;
     registration_open: boolean;
     team_registration_url: string | null;
@@ -64,7 +62,6 @@ export function TournamentEditorClient({ tournament }: TournamentEditorClientPro
       location: tournament?.location ?? "",
       fee_myr: String(tournament?.fee_myr ?? 0),
       description: tournament?.description ?? "",
-      rules: tournament?.rules ?? "",
       poster_url: tournament?.poster_url ?? "",
       registration_open: tournament?.registration_open ?? false,
       team_registration_url: tournament?.team_registration_url ?? "",
@@ -109,7 +106,6 @@ export function TournamentEditorClient({ tournament }: TournamentEditorClientPro
       location: data.location,
       fee_myr: Number(data.fee_myr),
       description: data.description ?? "",
-      rules: data.rules ?? "",
       poster_url: data.poster_url ?? "",
       registration_open: data.registration_open,
       team_registration_url: data.team_registration_url ?? "",
@@ -161,10 +157,6 @@ export function TournamentEditorClient({ tournament }: TournamentEditorClientPro
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
           <Textarea id="description" rows={3} {...register("description")} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="rules">Rules</Label>
-          <Textarea id="rules" rows={4} {...register("rules")} />
         </div>
       </div>
 

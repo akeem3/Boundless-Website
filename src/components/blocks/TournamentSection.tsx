@@ -15,7 +15,6 @@ interface Tournament {
   location: string;
   fee_myr: number;
   description: string | null;
-  rules: string | null;
   poster_url: string | null;
   team_registration_url: string | null;
 }
@@ -34,7 +33,7 @@ async function getLatestTournament(): Promise<Tournament | null> {
   const { data } = await supabase
     .from("tournaments")
     .select(
-      "title, starts_at, location, fee_myr, description, rules, poster_url, team_registration_url"
+      "title, starts_at, location, fee_myr, description, poster_url, team_registration_url"
     )
     .eq("registration_open", true)
     .order("starts_at", { ascending: false })
