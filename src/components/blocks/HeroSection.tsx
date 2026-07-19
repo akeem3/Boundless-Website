@@ -63,7 +63,7 @@ export function HeroSection({ tournamentTitle }: { tournamentTitle: string | nul
     <section
       id="hero"
       ref={ref}
-      className="relative min-h-[80svh] overflow-hidden"
+      className="relative min-h-[55svh] sm:min-h-[80svh] overflow-hidden"
     >
       {/* Poster — always rendered, is LCP element */}
       <Image
@@ -94,7 +94,7 @@ export function HeroSection({ tournamentTitle }: { tournamentTitle: string | nul
       {/* Content - positioned vertically centered, slightly below */}
       <div className="absolute inset-x-0 top-0 z-10 flex items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-[800px] mt-32 sm:mt-24 md:mt-32 mx-auto sm:mx-0 text-center sm:text-left">
+          <div className="max-w-[800px] mt-20 sm:mt-24 md:mt-32 mx-auto sm:mx-0 text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-4 sm:mb-6 leading-tight">
               {HERO_HEADLINE}
             </h1>

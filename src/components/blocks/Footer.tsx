@@ -34,18 +34,18 @@ export async function Footer() {
             </span>
           </div>
 
-          <nav className="flex items-center gap-6 text-sm text-foreground">
-            <Link href="#" className="hover:text-secondary transition-colors">
+          <nav className="flex items-center gap-2 sm:gap-6 text-sm text-foreground">
+            <Link href="#" className="py-2 px-2 hover:text-secondary transition-colors">
               Privacy
             </Link>
-            <Link href="#" className="hover:text-secondary transition-colors">
+            <Link href="#" className="py-2 px-2 hover:text-secondary transition-colors">
               Terms
             </Link>
             <a
               href={buildInstagramLink(instagramUrl)}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-secondary transition-colors"
+              className="py-2 px-2 hover:text-secondary transition-colors"
             >
               Instagram
             </a>

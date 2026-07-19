@@ -50,7 +50,7 @@ function ContactCard({ icon, label, detail, href }: ContactCardProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col items-center text-center p-6 rounded-lg transition-colors hover:bg-accent/5"
+      className="group flex flex-col items-center text-center p-5 sm:p-6 rounded-lg transition-colors hover:bg-accent/5"
       style={{ border: "0.7px solid var(--border-subtle)" }}
     >
       <div className="size-8 mb-4 group-hover:scale-110 transition-transform">
@@ -84,12 +84,12 @@ export async function ContactSection() {
     <section
       id="contact"
       aria-labelledby="contact-headline"
-      className="py-16 md:py-24 border-t border-border-subtle"
+      className="py-12 md:py-24 border-t border-border-subtle"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="contact-headline"
-          className="text-3xl md:text-4xl text-foreground mb-4 text-center"
+          className="text-2xl sm:text-3xl md:text-4xl text-foreground mb-4 text-center"
         >
           {CONTACT_HEADLINE}
         </h2>

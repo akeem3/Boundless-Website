@@ -90,9 +90,9 @@ function DetailRow({
   text: string;
 }) {
   return (
-    <div className="flex items-center gap-4">
-      <Icon className="size-6 text-foreground shrink-0" />
-      <span className="text-foreground text-lg">{text}</span>
+    <div className="flex items-center gap-3 sm:gap-4">
+      <Icon className="size-5 sm:size-6 text-foreground shrink-0" />
+      <span className="text-foreground text-base sm:text-lg">{text}</span>
     </div>
   );
 }
@@ -119,7 +119,7 @@ export async function TournamentSection() {
     <section
       id="tournaments"
       aria-labelledby="tournaments-headline"
-      className="border border-border-subtle py-16 md:py-24"
+      className="border border-border-subtle py-12 md:py-24"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-start">
@@ -127,25 +127,25 @@ export async function TournamentSection() {
           <div className="md:col-span-7 order-2 md:order-1">
             <h2
               id="tournaments-headline"
-              className="text-3xl md:text-4xl text-foreground font-semibold mb-8"
+              className="text-2xl sm:text-3xl md:text-4xl text-foreground font-semibold mb-6 sm:mb-8"
             >
               {TOURNAMENTS_HEADLINE}
             </h2>
 
             {tournament ? (
               <>
-                <h3 className="text-3xl md:text-4xl lg:text-5xl text-foreground font-semibold leading-tight mb-10">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground font-semibold leading-tight mb-6 sm:mb-10">
                   {tournament.title}
                 </h3>
 
-                <div className="space-y-5 mb-10">
+                <div className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
                   <DetailRow icon={Calendar} text={dateTimeStr} />
                   <DetailRow icon={MapPin} text={tournament.location} />
                   <DetailRow icon={Ticket} text={feeStr} />
                 </div>
 
                 {tournament.description && (
-                  <p className="text-secondary text-sm leading-relaxed mb-10">
+                  <p className="text-secondary text-sm leading-relaxed mb-6 sm:mb-10">
                     {tournament.description}
                   </p>
                 )}

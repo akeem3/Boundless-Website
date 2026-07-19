@@ -77,7 +77,7 @@ export function ProductCard({
           href={orderUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 block w-full text-center rounded-[7px] px-3 py-2 bg-background text-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+          className="mt-1 block w-full text-center rounded-[7px] px-3 py-3 min-h-[44px] bg-background text-foreground text-sm font-medium hover:opacity-90 transition-opacity"
         >
           {ctaText}
         </a>

@@ -106,17 +106,17 @@ export async function SessionsSection() {
     <section
       id="sessions"
       aria-labelledby="sessions-headline"
-      className="py-16 md:py-24"
+      className="py-12 md:py-24"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <h2
           id="sessions-headline"
-          className="text-3xl md:text-4xl text-foreground text-center sm:text-left mb-4"
+          className="text-2xl sm:text-3xl md:text-4xl text-foreground text-center sm:text-left mb-4"
         >
           {SESSIONS_HEADLINE}
         </h2>
 
-        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 mb-10">
+        <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 mb-8 sm:mb-10">
           <p className="text-secondary text-center sm:text-left">
             {SESSIONS_SUBTITLE}
           </p>
@@ -124,14 +124,13 @@ export async function SessionsSection() {
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className={buttonVariants({ variant: "ghost", size: "lg" })}
+            className={`${buttonVariants({ variant: "ghost", size: "lg" })} w-full sm:w-auto text-center`}
           >
             Join the WhatsApp group
           </a>
         </div>
 
-        <div
-          className="rounded-lg p-6 md:p-8"
+          <div className="rounded-lg p-5 sm:p-6 md:p-8"
           style={{ border: "0.7px solid var(--border-subtle)" }}
         >
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
@@ -148,7 +147,7 @@ export async function SessionsSection() {
                 href={sessionJoinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={buttonVariants({ variant: "default", size: "lg" })}
+                className={`${buttonVariants({ variant: "default", size: "lg" })} w-full sm:w-auto text-center`}
               >
                 Join this Session
               </a>

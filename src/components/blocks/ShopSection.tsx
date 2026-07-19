@@ -47,12 +47,12 @@ export async function ShopSection() {
     <section
       id="shop"
       aria-labelledby="shop-headline"
-      className="py-16 md:py-24 bg-foreground"
+      className="py-12 md:py-24 bg-foreground"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="shop-headline"
-          className="text-3xl md:text-4xl text-background font-semibold text-center mb-4"
+          className="text-2xl sm:text-3xl md:text-4xl text-background font-semibold text-center mb-4"
         >
           {SHOP_HEADLINE}
         </h2>
@@ -61,7 +61,7 @@ export async function ShopSection() {
         </p>
 
         {products.length > 0 ? (
-          <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 max-w-5xl mx-auto">
             {products.map((product) => {
               const orderUrl =
                 buildProductOrderLink(product.order_url, globalOrderUrl) ?? "#";

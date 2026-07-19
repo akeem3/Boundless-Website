@@ -38,7 +38,7 @@ export async function SponsorMarquee() {
   const sponsors = await getSponsors();
 
   return (
-    <section role="region" aria-label="Sponsors" className="py-8 border-b border-border-subtle">
+    <section role="region" aria-label="Sponsors" className="py-6 sm:py-8 border-b border-border-subtle">
       <div className="overflow-hidden">
         <div className="marquee-track">
           <div className="flex items-center gap-8 sm:gap-12 md:gap-24 px-6 sm:px-8 md:px-12">
