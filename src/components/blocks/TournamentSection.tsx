@@ -1,4 +1,5 @@
 import { Calendar, MapPin, Ticket } from "lucide-react";
+import Image from "next/image";
 import { buttonVariants } from "@/components/ui/button";
 import {
   TOURNAMENTS_HEADLINE,
@@ -181,12 +182,14 @@ export async function TournamentSection() {
 
           {/* Right Column — Poster Image */}
           <div className="md:col-span-5 order-1 md:order-2">
-            <div className="relative aspect-[7/9] rounded-[15px] overflow-hidden border-[1.26px] border-border-subtle">
+            <div className="relative aspect-7/9 rounded-[15px] overflow-hidden border-[1.26px] border-border-subtle">
               {tournament?.poster_url ? (
-                <img
+                <Image
                   src={tournament.poster_url}
                   alt={tournament.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                  className="object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-muted flex items-center justify-center">
