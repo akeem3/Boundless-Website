@@ -17,10 +17,10 @@ const contactSchema = z.object({
   whatsapp_number: z.string().min(1, "WhatsApp number is required"),
   whatsapp_generic_message: z.string().min(1, "Message is required"),
   whatsapp_find_team_message_template: z.string().min(1, "Template is required"),
+  whatsapp_group_url: z.string().optional(),
   email_address: z.string().email("Invalid email"),
   email_default_subject: z.string().min(1, "Subject is required"),
   instagram_url: z.string().url("Invalid URL").or(z.literal("")),
-  session_join_url: z.string().optional(),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
@@ -30,10 +30,10 @@ interface ContactEditorClientProps {
     whatsapp_number: string;
     whatsapp_generic_message: string;
     whatsapp_find_team_message_template: string;
+    whatsapp_group_url: string | null;
     email_address: string;
     email_default_subject: string;
     instagram_url: string;
-    session_join_url: string | null;
   } | null;
 }
 
@@ -52,10 +52,10 @@ export function ContactEditorClient({ settings }: ContactEditorClientProps) {
       whatsapp_generic_message: settings?.whatsapp_generic_message ?? "",
       whatsapp_find_team_message_template:
         settings?.whatsapp_find_team_message_template ?? "",
+      whatsapp_group_url: settings?.whatsapp_group_url ?? "",
       email_address: settings?.email_address ?? "",
       email_default_subject: settings?.email_default_subject ?? "",
       instagram_url: settings?.instagram_url ?? "",
-      session_join_url: settings?.session_join_url ?? "",
     },
   });
 
@@ -63,7 +63,7 @@ export function ContactEditorClient({ settings }: ContactEditorClientProps) {
     setSaving(true);
     const result = await saveContactSettings({
       ...data,
-      session_join_url: data.session_join_url ?? "",
+      whatsapp_group_url: data.whatsapp_group_url ?? "",
     });
     setSaving(false);
 
@@ -128,6 +128,17 @@ export function ContactEditorClient({ settings }: ContactEditorClientProps) {
             </p>
           )}
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="whatsapp_group_url">WhatsApp Group URL</Label>
+          <Input
+            id="whatsapp_group_url"
+            placeholder="https://chat.whatsapp.com/..."
+            {...register("whatsapp_group_url")}
+          />
+          <p className="text-xs text-foreground/60">
+            Direct link to your WhatsApp group. Used for the "Join the WhatsApp group" CTA.
+          </p>
+        </div>
       </div>
 
       <div className="rounded-xl border border-border-subtle bg-card p-6 space-y-4">
@@ -172,14 +183,6 @@ export function ContactEditorClient({ settings }: ContactEditorClientProps) {
               {errors.instagram_url.message}
             </p>
           )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="session_join_url">Session Join URL (Google Form)</Label>
-          <Input
-            id="session_join_url"
-            placeholder="https://forms.google.com/..."
-            {...register("session_join_url")}
-          />
         </div>
       </div>
 

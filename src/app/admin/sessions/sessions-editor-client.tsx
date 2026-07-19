@@ -29,6 +29,7 @@ const sessionSchema = z.object({
   location: z.string().min(1, "Location is required"),
   note: z.string().optional(),
   capacity: z.string().min(1, "Capacity is required"),
+  join_url: z.string().optional(),
 });
 
 type SessionFormData = z.infer<typeof sessionSchema>;
@@ -40,6 +41,7 @@ interface Session {
   note: string | null;
   capacity: number;
   spots_taken: number;
+  join_url: string | null;
 }
 
 export function SessionsEditorClient({ sessions }: { sessions: Session[] }) {
@@ -66,7 +68,7 @@ export function SessionsEditorClient({ sessions }: { sessions: Session[] }) {
 
   function openCreateDialog() {
     setEditingSession(null);
-    reset({ starts_at: "", location: "", note: "", capacity: "20" });
+    reset({ starts_at: "", location: "", note: "", capacity: "20", join_url: "" });
     setDialogOpen(true);
   }
 
@@ -77,6 +79,7 @@ export function SessionsEditorClient({ sessions }: { sessions: Session[] }) {
       location: session.location,
       note: session.note ?? "",
       capacity: String(session.capacity),
+      join_url: session.join_url ?? "",
     });
     setDialogOpen(true);
   }
@@ -88,6 +91,7 @@ export function SessionsEditorClient({ sessions }: { sessions: Session[] }) {
       location: data.location,
       note: data.note ?? "",
       capacity: Number(data.capacity),
+      join_url: data.join_url ?? "",
     };
     const result = editingSession
       ? await updateSession(editingSession.id, payload)
@@ -205,6 +209,17 @@ export function SessionsEditorClient({ sessions }: { sessions: Session[] }) {
             <div className="space-y-2">
               <Label htmlFor="session-note">Note (optional)</Label>
               <Textarea id="session-note" rows={2} {...register("note")} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="session-join_url">Join Session URL (optional)</Label>
+              <Input
+                id="session-join_url"
+                placeholder="https://forms.google.com/..."
+                {...register("join_url")}
+              />
+              <p className="text-xs text-foreground/60">
+                Custom link for this session's CTA button. Falls back to global setting if empty.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="session-capacity">Capacity</Label>

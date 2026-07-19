@@ -2,21 +2,12 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   SESSIONS_HEADLINE,
   SESSIONS_SUBTITLE,
-  SESSIONS_TIME,
-  SESSIONS_LOCATION,
   SESSIONS_DESCRIPTION,
 } from "@/lib/constants/copy";
-import { buildGenericWhatsAppLink } from "@/lib/links";
 import { createClient } from "@/lib/supabase/server";
 
 interface SessionSettings {
-  session_join_url: string | null;
-  whatsapp_number: string;
-  whatsapp_generic_message: string;
-  whatsapp_find_team_message_template: string;
-  email_address: string;
-  email_default_subject: string;
-  instagram_url: string;
+  whatsapp_group_url: string | null;
 }
 
 interface Session {
@@ -24,41 +15,38 @@ interface Session {
   starts_at: string;
   location: string;
   note: string | null;
+  join_url: string | null;
 }
 
 async function getSessionSettings(): Promise<SessionSettings | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("contact_settings")
-    .select(
-      "session_join_url, whatsapp_number, whatsapp_generic_message, whatsapp_find_team_message_template, email_address, email_default_subject, instagram_url"
-    )
+    .select("whatsapp_group_url")
     .eq("id", "singleton")
     .single();
   return data;
 }
 
-async function getNextSession(): Promise<Session | null> {
+async function getUpcomingSessions(): Promise<Session[]> {
   const supabase = await createClient();
 
   const { data: upcoming } = await supabase
     .from("sessions")
-    .select("id, starts_at, location, note")
+    .select("id, starts_at, location, note, join_url")
     .gte("starts_at", new Date().toISOString())
     .order("starts_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+    .limit(3);
 
-  if (upcoming) return upcoming;
+  if (upcoming && upcoming.length > 0) return upcoming;
 
   const { data: latest } = await supabase
     .from("sessions")
-    .select("id, starts_at, location, note")
+    .select("id, starts_at, location, note, join_url")
     .order("starts_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(3);
 
-  return latest;
+  return latest ?? [];
 }
 
 function DateBlock({ date }: { date: Date }) {
@@ -66,7 +54,7 @@ function DateBlock({ date }: { date: Date }) {
   const month = date.toLocaleString("en-US", { month: "short" });
 
   return (
-    <div className="flex flex-col items-center justify-center min-w-[72px]">
+    <div className="flex flex-col items-center justify-center min-w-18">
       <span className="text-4xl font-bold text-foreground leading-none">
         {day}
       </span>
@@ -78,29 +66,13 @@ function DateBlock({ date }: { date: Date }) {
 }
 
 export async function SessionsSection() {
-  const [settings, nextSession] = await Promise.all([
+  const [settings, sessions] = await Promise.all([
     getSessionSettings(),
-    getNextSession(),
+    getUpcomingSessions(),
   ]);
 
-  const whatsappLink = settings
-    ? buildGenericWhatsAppLink(settings)
-    : "#";
-  const sessionJoinUrl = settings?.session_join_url ?? "#";
-
-  const sessionDate = nextSession
-    ? new Date(nextSession.starts_at)
-    : new Date();
-  const sessionTime = nextSession
-    ? sessionDate.toLocaleString("en-GB", {
-        weekday: "long",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "Asia/Kuala_Lumpur",
-      })
-    : SESSIONS_TIME;
-  const sessionLocation = nextSession?.location ?? SESSIONS_LOCATION;
-  const sessionDescription = nextSession?.note ?? SESSIONS_DESCRIPTION;
+  const whatsappLink = settings?.whatsapp_group_url ?? "#";
+  const sessionsData = sessions;
 
   return (
     <section
@@ -130,29 +102,54 @@ export async function SessionsSection() {
           </a>
         </div>
 
-          <div className="rounded-lg p-5 sm:p-6 md:p-8"
-          style={{ border: "0.7px solid var(--border-subtle)" }}
-        >
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <DateBlock date={sessionDate} />
+        <div className="space-y-4">
+          {sessionsData.map((session) => {
+            const sessionDate = new Date(session.starts_at);
+            const sessionTime = sessionDate.toLocaleString("en-GB", {
+              weekday: "long",
+              hour: "2-digit",
+              minute: "2-digit",
+              timeZone: "Asia/Kuala_Lumpur",
+            });
+            const sessionLocation = session.location;
+            const sessionDescription = session.note ?? SESSIONS_DESCRIPTION;
+            const sessionUrl = session.join_url ?? "#";
 
-            <div className="flex-1 space-y-2 text-center sm:text-left">
-              <p className="text-foreground font-medium">{sessionTime}</p>
-              <p className="text-secondary">{sessionLocation}</p>
-              <p className="text-secondary">{sessionDescription}</p>
-            </div>
-
-            <div className="w-full sm:w-auto sm:ml-auto">
-              <a
-                href={sessionJoinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${buttonVariants({ variant: "default", size: "lg" })} w-full sm:w-auto text-center`}
+            return (
+              <div
+                key={session.id}
+                className="rounded-lg p-5 sm:p-6 md:p-8"
+                style={{ border: "0.7px solid var(--border-subtle)" }}
               >
-                Join this Session
-              </a>
-            </div>
-          </div>
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                  <DateBlock date={sessionDate} />
+
+                  <div className="flex-1 space-y-2 text-center sm:text-left">
+                    <p className="text-foreground font-medium">{sessionTime}</p>
+                    <p className="text-secondary">{sessionLocation}</p>
+                    <p className="text-secondary">{sessionDescription}</p>
+                  </div>
+
+                  <div className="w-full sm:w-auto sm:ml-auto">
+                    <a
+                      href={sessionUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${buttonVariants({ variant: "default", size: "lg" })} w-full sm:w-auto text-center`}
+                    >
+                      Join this Session
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {sessionsData.length === 0 && (
+            <p className="text-secondary text-center py-8">
+              No upcoming sessions. Check back soon!
+            </p>
+          )}
         </div>
       </div>
     </section>

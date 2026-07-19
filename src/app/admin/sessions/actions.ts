@@ -22,6 +22,7 @@ export async function createSession(formData: {
   location: string;
   note: string;
   capacity: number;
+  join_url: string;
 }) {
   const supabase = createServiceClient();
   const { error } = await supabase.from("sessions").insert({
@@ -29,6 +30,7 @@ export async function createSession(formData: {
     location: formData.location,
     note: formData.note || null,
     capacity: formData.capacity,
+    join_url: formData.join_url || null,
   });
 
   if (error) {
@@ -47,6 +49,7 @@ export async function updateSession(
     location: string;
     note: string;
     capacity: number;
+    join_url: string;
   }
 ) {
   const supabase = createServiceClient();
@@ -57,6 +60,7 @@ export async function updateSession(
       location: formData.location,
       note: formData.note || null,
       capacity: formData.capacity,
+      join_url: formData.join_url || null,
     })
     .eq("id", id);
 

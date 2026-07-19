@@ -22,10 +22,10 @@ export async function saveContactSettings(formData: {
   whatsapp_number: string;
   whatsapp_generic_message: string;
   whatsapp_find_team_message_template: string;
+  whatsapp_group_url: string;
   email_address: string;
   email_default_subject: string;
   instagram_url: string;
-  session_join_url: string;
 }) {
   const supabase = createServiceClient();
 
@@ -36,10 +36,10 @@ export async function saveContactSettings(formData: {
     whatsapp_number: normalizedNumber,
     whatsapp_generic_message: formData.whatsapp_generic_message,
     whatsapp_find_team_message_template: formData.whatsapp_find_team_message_template,
+    whatsapp_group_url: formData.whatsapp_group_url || null,
     email_address: formData.email_address,
     email_default_subject: formData.email_default_subject,
     instagram_url: formData.instagram_url,
-    session_join_url: formData.session_join_url || null,
   });
 
   if (error) {
