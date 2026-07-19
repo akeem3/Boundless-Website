@@ -6,6 +6,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
 interface ProductImage {
   image_url: string;
@@ -29,16 +30,21 @@ export function ProductCard({
   orderUrl: string;
   ctaText: string;
 }) {
+  const prefersReduced = usePrefersReducedMotion();
   const images = product.product_images ?? [];
 
   return (
     <div
-      className="rounded-[10px] overflow-hidden border border-[#151F2B]/10"
+      className="rounded-[10px] overflow-hidden border border-background/10"
     >
       <div className="aspect-square bg-background/10 overflow-hidden">
         {images.length > 0 ? (
           <Carousel
-            plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
+            plugins={
+              prefersReduced
+                ? []
+                : [Autoplay({ delay: 3000, stopOnInteraction: false })]
+            }
             opts={{ loop: true }}
           >
             <CarouselContent>
@@ -60,7 +66,7 @@ export function ProductCard({
         )}
       </div>
 
-      <div className="p-4 space-y-2 bg-foreground border-t border-[#151F2B]/10">
+      <div className="p-4 space-y-2 bg-foreground border-t border-background/10">
         <h3 className="text-background font-semibold">{product.name}</h3>
         {product.sizes && product.sizes.length > 0 && (
           <p className="text-background/70 text-xs">

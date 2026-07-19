@@ -27,7 +27,7 @@ export function buildFindTeamLink(
   contact: ContactSettings,
   tournamentTitle: string
 ): string {
-  const message = contact.whatsapp_find_team_message_template.replace(
+  const message = contact.whatsapp_find_team_message_template.replaceAll(
     "{tournament_title}",
     tournamentTitle
   );

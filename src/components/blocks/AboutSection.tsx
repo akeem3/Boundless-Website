@@ -33,6 +33,7 @@ export function AboutSection() {
               src="/about-community.jpeg"
               alt="Boundless FC community gathering"
               fill
+              sizes="(max-width: 768px) 100vw, 58vw"
               className="object-cover"
             />
           </div>

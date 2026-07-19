@@ -6,11 +6,25 @@ import { ShopSection } from "@/components/blocks/ShopSection";
 import { AboutSection } from "@/components/blocks/AboutSection";
 import { ContactSection } from "@/components/blocks/ContactSection";
 import { Footer } from "@/components/blocks/Footer";
+import { createClient } from "@/lib/supabase/server";
 
-export default function Home() {
+async function getTournamentTitle(): Promise<string | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("tournaments")
+    .select("title")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data?.title ?? null;
+}
+
+export default async function Home() {
+  const tournamentTitle = await getTournamentTitle();
+
   return (
     <>
-      <HeroSection />
+      <HeroSection tournamentTitle={tournamentTitle} />
       <SponsorMarquee />
       <SessionsSection />
       <TournamentSection />

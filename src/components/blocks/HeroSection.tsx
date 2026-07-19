@@ -8,7 +8,7 @@ import {
   HERO_HEADLINE,
   HERO_SUBHEAD,
   HERO_CTA_TEXT,
-  HERO_MICROCOPY,
+  HERO_COMING_SOON,
 } from "@/lib/constants/copy";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 
@@ -36,7 +36,7 @@ function useSaveData(): boolean {
   return saveData;
 }
 
-export function HeroSection() {
+export function HeroSection({ tournamentTitle }: { tournamentTitle: string | null }) {
   const prefersReduced = usePrefersReducedMotion();
   const saveData = useSaveData();
   const [inView, setInView] = useState(false);
@@ -88,8 +88,8 @@ export function HeroSection() {
         </video>
       )}
 
-      {/* Dark overlay - #1E1E1E at 82% opacity */}
-      <div className="absolute inset-0 bg-[#1E1E1E]/82" />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-[var(--hero-overlay)]/82" />
 
       {/* Content - positioned vertically centered, slightly below */}
       <div className="absolute inset-x-0 top-0 z-10 flex items-center">
@@ -108,7 +108,9 @@ export function HeroSection() {
               >
                 {HERO_CTA_TEXT}
               </Link>
-              <p className="text-xs sm:text-sm text-foreground">{HERO_MICROCOPY}</p>
+              <p className="text-xs sm:text-sm text-foreground">
+                {tournamentTitle ? `Next up: ${tournamentTitle}` : HERO_COMING_SOON}
+              </p>
             </div>
           </div>
         </div>

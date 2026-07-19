@@ -19,6 +19,13 @@ interface SessionSettings {
   instagram_url: string;
 }
 
+interface Session {
+  id: string;
+  starts_at: string;
+  location: string;
+  note: string | null;
+}
+
 async function getSessionSettings(): Promise<SessionSettings | null> {
   const supabase = await createClient();
   const { data } = await supabase
@@ -31,10 +38,32 @@ async function getSessionSettings(): Promise<SessionSettings | null> {
   return data;
 }
 
-function DateBlock() {
-  const now = new Date();
-  const day = now.getDate();
-  const month = now.toLocaleString("en-US", { month: "short" });
+async function getNextSession(): Promise<Session | null> {
+  const supabase = await createClient();
+
+  const { data: upcoming } = await supabase
+    .from("sessions")
+    .select("id, starts_at, location, note")
+    .gte("starts_at", new Date().toISOString())
+    .order("starts_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (upcoming) return upcoming;
+
+  const { data: latest } = await supabase
+    .from("sessions")
+    .select("id, starts_at, location, note")
+    .order("starts_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return latest;
+}
+
+function DateBlock({ date }: { date: Date }) {
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "short" });
 
   return (
     <div className="flex flex-col items-center justify-center min-w-[72px]">
@@ -49,12 +78,29 @@ function DateBlock() {
 }
 
 export async function SessionsSection() {
-  const settings = await getSessionSettings();
+  const [settings, nextSession] = await Promise.all([
+    getSessionSettings(),
+    getNextSession(),
+  ]);
 
   const whatsappLink = settings
     ? buildGenericWhatsAppLink(settings)
     : "#";
   const sessionJoinUrl = settings?.session_join_url ?? "#";
+
+  const sessionDate = nextSession
+    ? new Date(nextSession.starts_at)
+    : new Date();
+  const sessionTime = nextSession
+    ? sessionDate.toLocaleString("en-GB", {
+        weekday: "long",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Asia/Kuala_Lumpur",
+      })
+    : SESSIONS_TIME;
+  const sessionLocation = nextSession?.location ?? SESSIONS_LOCATION;
+  const sessionDescription = nextSession?.note ?? SESSIONS_DESCRIPTION;
 
   return (
     <section
@@ -89,12 +135,12 @@ export async function SessionsSection() {
           style={{ border: "0.7px solid var(--border-subtle)" }}
         >
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <DateBlock />
+            <DateBlock date={sessionDate} />
 
             <div className="flex-1 space-y-2 text-center sm:text-left">
-              <p className="text-foreground font-medium">{SESSIONS_TIME}</p>
-              <p className="text-secondary">{SESSIONS_LOCATION}</p>
-              <p className="text-secondary">{SESSIONS_DESCRIPTION}</p>
+              <p className="text-foreground font-medium">{sessionTime}</p>
+              <p className="text-secondary">{sessionLocation}</p>
+              <p className="text-secondary">{sessionDescription}</p>
             </div>
 
             <div className="w-full sm:w-auto sm:ml-auto">

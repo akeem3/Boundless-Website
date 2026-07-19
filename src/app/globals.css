@@ -52,6 +52,7 @@
   --input: #2d3a4a;
   --ring: #ff6c47;
   --radius: 0.625rem;
+  --hero-overlay: #1e1e1e;
 }
 
 @layer base {
@@ -63,13 +64,6 @@
   }
   html {
     @apply font-sans;
-    scroll-behavior: smooth;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
   }
 }
 
@@ -97,5 +91,12 @@
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation-play-state: paused;
+  }
+
+  .animate-in,
+  .animate-out,
+  .fade-in,
+  .fade-out {
+    animation: none !important;
   }
 }

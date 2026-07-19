@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Boundless FC Website
 
-## Getting Started
+An open futsal community website for Boundless FC in Bukit Jalil, Kuala Lumpur.
 
-First, run the development server:
+## What This Site Does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Shows upcoming futsal sessions and tournaments
+- Lets players join via WhatsApp or Google Forms
+- Displays team/club merchandise for order
+- Lists sponsors
+- Provides contact information
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The public site is read-only. All content updates happen through a secure admin panel.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How to Update Content
 
-## Learn More
+### Tournament
 
-To learn more about Next.js, take a look at the following resources:
+1. Go to your admin panel (e.g. `your-site.vercel.app/admin`)
+2. Log in with your admin credentials
+3. Click **Tournament**
+4. Fill in the form with tournament details (title, date, location, fee)
+5. Upload a poster image (JPEG, PNG, or WebP — max 5MB)
+6. Toggle **Registration Open** on when ready
+7. Click **Save**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The landing page updates automatically.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Sessions
 
-## Deploy on Vercel
+1. Go to **Admin → Sessions**
+2. Click **Create Session**
+3. Enter the date, time, location, capacity, and any notes
+4. Click **Save**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The next upcoming session appears on the landing page.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Shop (Merchandise)
+
+1. Go to **Admin → Shop**
+2. To add a product: click **Add Product**, fill in name, description, price, and sizes
+3. To add images: open the product, click **Upload Image**
+4. To set the order form link: click the **Settings** gear icon and paste your Google Form or Notion URL
+
+Products appear in the Shop section on the landing page.
+
+### Sponsors
+
+1. Go to **Admin → Sponsors**
+2. Click **Add Sponsor**
+3. Enter the sponsor name and upload their logo
+4. Use the arrow buttons to reorder sponsors
+
+Active sponsors appear in the scrolling marquee on the landing page.
+
+### Contact Information
+
+1. Go to **Admin → Contact**
+2. Update any of these fields:
+   - **WhatsApp Number** (digits only, e.g. `60123456789`)
+   - **Email Address**
+   - **Instagram URL**
+   - **Session Join URL** (Google Form link for session sign-ups)
+3. Click **Save**
+
+---
+
+## Where to Paste External URLs
+
+| Field | Where to Find It | Where to Paste |
+|---|---|---|
+| Tournament registration form | Your Google Form URL | Admin → Tournament → Team Registration URL |
+| Shop order form | Your Google Form or Notion URL | Admin → Shop → Settings (gear icon) → Shop Order URL |
+| Session join form | Your Google Form URL | Admin → Contact → Session Join URL |
+
+---
+
+## Where to Update Contact Info
+
+All contact details are in **Admin → Contact**:
+
+- **WhatsApp Number** — your community WhatsApp number (digits only, e.g. `60123456789`)
+- **Email Address** — your contact email
+- **Instagram URL** — full Instagram profile URL (e.g. `https://instagram.com/boundlessfc`)
+
+---
+
+## Deploy Process
+
+The site is hosted on Vercel and auto-deploys from GitHub.
+
+1. Make your changes in the admin panel (no code changes needed for content updates)
+2. If you need to update the code, push changes to the `main` branch on GitHub
+3. Vercel automatically deploys within 1–2 minutes
+4. No manual steps required
+
+---
+
+## Environment Variables
+
+These are set in Vercel project settings (Settings → Environment Variables):
+
+| Variable | What It Does | Example Value |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | `https://xxx.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Your Supabase publishable (anon) key | `sb_publishable_xxx` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key (secret) | `sb_secret_xxx` |
+| `ADMIN_USERNAME` | Admin panel login email | `admin@boundlessfc.com` |
+| `ADMIN_PASSWORD` | Admin panel login password | `your-secure-password` |
+
+**Never share** `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_USERNAME`, or `ADMIN_PASSWORD` with anyone.
+
+---
+
+## Tech Stack (For Reference)
+
+- **Frontend:** Next.js (React)
+- **Database & Auth:** Supabase (PostgreSQL)
+- **Hosting:** Vercel (free tier)
+- **No paid tools required** — everything runs on free-tier limits

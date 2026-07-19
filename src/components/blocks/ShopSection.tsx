@@ -61,17 +61,18 @@ export async function ShopSection() {
         </p>
 
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
             {products.map((product) => {
               const orderUrl =
                 buildProductOrderLink(product.order_url, globalOrderUrl) ?? "#";
               return (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  orderUrl={orderUrl}
-                  ctaText={SHOP_CTA_TEXT}
-                />
+                <div key={product.id} className="w-full min-w-[260px] max-w-[340px] flex-1">
+                  <ProductCard
+                    product={product}
+                    orderUrl={orderUrl}
+                    ctaText={SHOP_CTA_TEXT}
+                  />
+                </div>
               );
             })}
           </div>

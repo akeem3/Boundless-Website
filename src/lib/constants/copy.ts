@@ -9,6 +9,7 @@ export const HERO_SUBHEAD =
   "Boundless FC is an open futsal community in KL — no trials, no fixed teams. Two sessions a week, a tournament every few months.";
 export const HERO_CTA_TEXT = "View the upcoming tournament";
 export const HERO_MICROCOPY = "Next up: Boundless World Cup, 1st Aug 2026";
+export const HERO_COMING_SOON = "Coming soon";
 
 export const ABOUT_HEADLINE = "About — our journey";
 
@@ -45,5 +46,7 @@ export const CONTACT_SUBTITLE = "Reach us directly.";
 export const CONTACT_WHATSAPP_LABEL = "WhatsApp";
 export const CONTACT_EMAIL_LABEL = "Email";
 export const CONTACT_INSTAGRAM_LABEL = "Instagram";
+export const CONTACT_WHATSAPP_FALLBACK = "WhatsApp us";
+export const CONTACT_EMAIL_FALLBACK = "Email us";
 
 export const INSTAGRAM_URL = "https://instagram.com";

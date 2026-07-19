@@ -2,8 +2,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { buildInstagramLink } from "@/lib/links";
 import { INSTAGRAM_URL } from "@/lib/constants/copy";
+import { createClient } from "@/lib/supabase/server";
 
-export function Footer() {
+async function getInstagramUrl(): Promise<string> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("contact_settings")
+    .select("instagram_url")
+    .eq("id", "singleton")
+    .maybeSingle();
+  return data?.instagram_url || INSTAGRAM_URL;
+}
+
+export async function Footer() {
+  const instagramUrl = await getInstagramUrl();
+
   return (
     <footer className="border-t border-border-subtle bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -29,7 +42,7 @@ export function Footer() {
               Terms
             </Link>
             <a
-              href={buildInstagramLink(INSTAGRAM_URL)}
+              href={buildInstagramLink(instagramUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-secondary transition-colors"

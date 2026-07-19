@@ -1,10 +1,13 @@
-import { Phone, Mail, AtSign } from "lucide-react";
+import { Mail } from "lucide-react";
+import Image from "next/image";
 import {
   CONTACT_HEADLINE,
   CONTACT_SUBTITLE,
   CONTACT_WHATSAPP_LABEL,
   CONTACT_EMAIL_LABEL,
   CONTACT_INSTAGRAM_LABEL,
+  CONTACT_WHATSAPP_FALLBACK,
+  CONTACT_EMAIL_FALLBACK,
 } from "@/lib/constants/copy";
 import {
   buildGenericWhatsAppLink,
@@ -35,13 +38,13 @@ async function getContactSettings(): Promise<ContactSettings | null> {
 }
 
 interface ContactCardProps {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ReactNode;
   label: string;
   detail: string;
   href: string;
 }
 
-function ContactCard({ icon: Icon, label, detail, href }: ContactCardProps) {
+function ContactCard({ icon, label, detail, href }: ContactCardProps) {
   return (
     <a
       href={href}
@@ -50,7 +53,9 @@ function ContactCard({ icon: Icon, label, detail, href }: ContactCardProps) {
       className="group flex flex-col items-center text-center p-6 rounded-lg transition-colors hover:bg-accent/5"
       style={{ border: "0.7px solid var(--border-subtle)" }}
     >
-      <Icon className="size-8 text-secondary mb-4 group-hover:text-foreground transition-colors" />
+      <div className="size-8 mb-4 group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
       <h3 className="text-foreground font-medium mb-1">{label}</h3>
       <p className="text-secondary text-sm">{detail}</p>
     </a>
@@ -62,14 +67,17 @@ export async function ContactSection() {
 
   const whatsappLink = settings ? buildGenericWhatsAppLink(settings) : "#";
   const emailLink = settings ? buildEmailLink(settings) : "#";
-  const instagramLink = settings
+  const instagramLink = settings?.instagram_url
     ? buildInstagramLink(settings.instagram_url)
     : "#";
 
-  const whatsappDetail = settings?.whatsapp_number ?? "WhatsApp us";
-  const emailDetail = settings?.email_address ?? "Email us";
+  const whatsappDetail = settings?.whatsapp_number ?? CONTACT_WHATSAPP_FALLBACK;
+  const emailDetail = settings?.email_address ?? CONTACT_EMAIL_FALLBACK;
   const instagramDetail = settings?.instagram_url
-    ? settings.instagram_url.replace(/^https?:\/\/(www\.)?instagram\.com\//, "@")
+    ? settings.instagram_url
+        .replace(/\?.*$/, "")
+        .replace(/\/+$/, "")
+        .replace(/^https?:\/\/(www\.)?instagram\.com\//, "@")
     : "@boundlessfc";
 
   return (
@@ -89,19 +97,35 @@ export async function ContactSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <ContactCard
-            icon={Phone}
+            icon={
+              <Image
+                src="/logos/whatsapp-color-svgrepo-com.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="size-8"
+              />
+            }
             label={CONTACT_WHATSAPP_LABEL}
             detail={whatsappDetail}
             href={whatsappLink}
           />
           <ContactCard
-            icon={Mail}
+            icon={<Mail className="size-8 text-secondary group-hover:text-foreground transition-colors" />}
             label={CONTACT_EMAIL_LABEL}
             detail={emailDetail}
             href={emailLink}
           />
           <ContactCard
-            icon={AtSign}
+            icon={
+              <Image
+                src="/logos/instagram-color-svgrepo-com.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="size-8"
+              />
+            }
             label={CONTACT_INSTAGRAM_LABEL}
             detail={instagramDetail}
             href={instagramLink}
