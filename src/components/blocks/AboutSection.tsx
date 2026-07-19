@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { ABOUT_HEADLINE, ABOUT_BODY, ABOUT_STATS } from "@/lib/constants/copy";
+import { ArrowUpRight } from "lucide-react";
+import { ABOUT_HEADLINE, ABOUT_BODY, ABOUT_STATS, ABOUT_READ_MORE_URL } from "@/lib/constants/copy";
 
 export function AboutSection() {
   return (
@@ -11,7 +12,18 @@ export function AboutSection() {
             <h2 className="text-3xl md:text-4xl text-foreground mb-6">
               {ABOUT_HEADLINE}
             </h2>
-            <p className="text-secondary leading-relaxed mb-8">{ABOUT_BODY}</p>
+            <p className="text-secondary leading-relaxed mb-8">
+              {ABOUT_BODY}{" "}
+              <a
+                href={ABOUT_READ_MORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-accent font-semibold hover:underline underline-offset-4"
+              >
+                Read more
+                <ArrowUpRight className="size-4" />
+              </a>
+            </p>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4 sm:gap-6">

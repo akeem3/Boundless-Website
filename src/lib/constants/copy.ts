@@ -14,7 +14,10 @@ export const HERO_COMING_SOON = "Coming soon";
 export const ABOUT_HEADLINE = "About — our journey";
 
 export const ABOUT_BODY =
-  "Boundless began in 2024 with eleven players and a shared love for football. Two years on, it's the largest international grassroots football community in Kuala Lumpur, run by 2 students — 380+ players from 40+ countries call this pitch home.";
+  "Boundless started with a simple mission from Akeem of Nigeria and Yukai of Japan: break down cultural barriers through football. In a city where many international communities rarely mixed, they created a place where everyone could feel welcome. Today, hundreds of players from more than 40 countries have found friendships, competition, and a true sense of belonging through the game.";
+
+export const ABOUT_READ_MORE_URL =
+  "https://medium.com/@jackjdoyle98/i-accidentally-joined-the-most-ethnically-diverse-football-team-in-the-world-heres-what-i-learned-e292d48cfc73";
 
 export const ABOUT_STATS = [
   { value: "40+", label: "nationalities played" },
