@@ -6,6 +6,7 @@ import {
 import { buildProductOrderLink } from "@/lib/links";
 import { createClient } from "@/lib/supabase/server";
 import { ProductCard, type Product } from "./ShopCard";
+import { Reveal } from "@/components/blocks/Reveal";
 
 interface ShopSettings {
   shop_order_url: string | null;
@@ -50,34 +51,42 @@ export async function ShopSection() {
       className="py-12 md:py-24 bg-foreground"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2
-          id="shop-headline"
-          className="text-2xl sm:text-3xl md:text-4xl text-background font-semibold text-center mb-4"
-        >
-          {SHOP_HEADLINE}
-        </h2>
-        <p className="text-primary text-center mb-10">
-          {SHOP_SUBTITLE}
-        </p>
+        <Reveal delay={0}>
+          <h2
+            id="shop-headline"
+            className="text-2xl sm:text-3xl md:text-4xl text-background font-semibold text-center mb-4"
+          >
+            {SHOP_HEADLINE}
+          </h2>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="text-primary text-center mb-10">
+            {SHOP_SUBTITLE}
+          </p>
+        </Reveal>
 
         {products.length > 0 ? (
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 max-w-5xl mx-auto">
-            {products.map((product) => {
-              const orderUrl =
-                buildProductOrderLink(product.order_url, globalOrderUrl) ?? "#";
-              return (
-                <div key={product.id} className="w-full min-w-[260px] max-w-[340px] flex-1">
-                  <ProductCard
-                    product={product}
-                    orderUrl={orderUrl}
-                    ctaText={SHOP_CTA_TEXT}
-                  />
-                </div>
-              );
-            })}
-          </div>
+          <Reveal delay={0.2}>
+            <div className="flex flex-wrap justify-center gap-6 sm:gap-8 max-w-5xl mx-auto">
+              {products.map((product) => {
+                const orderUrl =
+                  buildProductOrderLink(product.order_url, globalOrderUrl) ?? "#";
+                return (
+                  <div key={product.id} className="w-full min-w-[260px] max-w-[340px] flex-1">
+                    <ProductCard
+                      product={product}
+                      orderUrl={orderUrl}
+                      ctaText={SHOP_CTA_TEXT}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </Reveal>
         ) : (
-          <p className="text-primary text-center">Shop items coming soon.</p>
+          <Reveal delay={0.2}>
+            <p className="text-primary text-center">Shop items coming soon.</p>
+          </Reveal>
         )}
       </div>
     </section>

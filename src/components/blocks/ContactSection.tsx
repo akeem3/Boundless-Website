@@ -15,6 +15,7 @@ import {
   buildInstagramLink,
 } from "@/lib/links";
 import { createClient } from "@/lib/supabase/server";
+import { Reveal } from "@/components/blocks/Reveal";
 
 interface ContactSettings {
   whatsapp_number: string;
@@ -87,15 +88,20 @@ export async function ContactSection() {
       className="py-12 md:py-24 border-t border-border-subtle"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2
-          id="contact-headline"
-          className="text-2xl sm:text-3xl md:text-4xl text-foreground mb-4 text-center"
-        >
-          {CONTACT_HEADLINE}
-        </h2>
-        <p className="text-secondary mb-10 text-center">{CONTACT_SUBTITLE}</p>
+        <Reveal delay={0}>
+          <h2
+            id="contact-headline"
+            className="text-2xl sm:text-3xl md:text-4xl text-foreground mb-4 text-center"
+          >
+            {CONTACT_HEADLINE}
+          </h2>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="text-secondary mb-10 text-center">{CONTACT_SUBTITLE}</p>
+        </Reveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <Reveal delay={0.2}>
           <ContactCard
             icon={
               <Image
@@ -110,12 +116,16 @@ export async function ContactSection() {
             detail={whatsappDetail}
             href={whatsappLink}
           />
+          </Reveal>
+          <Reveal delay={0.25}>
           <ContactCard
             icon={<Mail className="size-8 text-secondary group-hover:text-foreground transition-colors" />}
             label={CONTACT_EMAIL_LABEL}
             detail={emailDetail}
             href={emailLink}
           />
+          </Reveal>
+          <Reveal delay={0.3}>
           <ContactCard
             icon={
               <Image
@@ -130,6 +140,7 @@ export async function ContactSection() {
             detail={instagramDetail}
             href={instagramLink}
           />
+          </Reveal>
         </div>
       </div>
     </section>

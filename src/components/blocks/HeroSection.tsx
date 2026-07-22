@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, type Easing } from "motion/react";
 import { buttonVariants } from "@/components/ui/button";
 import {
   HERO_HEADLINE,
@@ -11,6 +12,7 @@ import {
   HERO_COMING_SOON,
 } from "@/lib/constants/copy";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { useCinema } from "@/lib/cinema-context";
 
 function useSaveData(): boolean {
   const [saveData, setSaveData] = useState(() => {
@@ -36,11 +38,16 @@ function useSaveData(): boolean {
   return saveData;
 }
 
+const DURATION = 0.5;
+const EASE: Easing = [0.16, 1, 0.3, 1];
+
 export function HeroSection({ tournamentTitle }: { tournamentTitle: string | null }) {
   const prefersReduced = usePrefersReducedMotion();
   const saveData = useSaveData();
   const [inView, setInView] = useState(false);
+  const [entranceDone, setEntranceDone] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { cinemaMode, toggleCinema } = useCinema();
 
   useEffect(() => {
     const el = ref.current;
@@ -57,13 +64,43 @@ export function HeroSection({ tournamentTitle }: { tournamentTitle: string | nul
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (prefersReduced) {
+      setEntranceDone(true);
+      return;
+    }
+    const timer = setTimeout(() => setEntranceDone(true), 1100);
+    return () => clearTimeout(timer);
+  }, [prefersReduced]);
+
   const shouldPlayVideo = !prefersReduced && !saveData && inView;
+  const canAnimate = !prefersReduced;
+
+  const entranceInitial = canAnimate ? { y: 24, opacity: 0, filter: "blur(6px)" } : false;
+
+  const entranceVisible = { y: 0, opacity: 1, filter: "blur(0px)" };
+
+  const entranceCinema = { y: 0, opacity: 0 };
+
+  const entranceT = (delay: number) => ({
+    duration: canAnimate ? DURATION : 0,
+    ease: EASE,
+    delay: cinemaMode || entranceDone ? 0 : delay,
+  });
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!entranceDone) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("a, button, [role='button']")) return;
+    toggleCinema();
+  };
 
   return (
     <section
       id="hero"
       ref={ref}
       className="relative min-h-[55svh] sm:min-h-[80svh] overflow-hidden"
+      onClick={handleClick}
     >
       {/* Poster — always rendered, is LCP element */}
       <Image
@@ -89,32 +126,61 @@ export function HeroSection({ tournamentTitle }: { tournamentTitle: string | nul
       )}
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-[var(--hero-overlay)]/82" />
+      <motion.div
+        className="absolute inset-0 bg-[var(--hero-overlay)]/82"
+        animate={cinemaMode ? { opacity: 0 } : { opacity: 1 }}
+        transition={{ duration: canAnimate ? 0.4 : 0, ease: EASE }}
+      />
 
-      {/* Content - positioned vertically centered, slightly below */}
-      <div className="absolute inset-x-0 top-0 z-10 flex items-center">
+      {/* Content */}
+      <motion.div
+        className="absolute inset-x-0 top-0 z-10 flex items-center"
+        animate={cinemaMode ? { y: 80, opacity: 0 } : { y: 0, opacity: 1 }}
+        transition={{ duration: canAnimate ? 0.4 : 0, ease: EASE }}
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-[800px] mt-10 sm:mt-24 md:mt-32 mx-auto sm:mx-0 text-center sm:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-4 sm:mb-6 leading-tight">
+            <motion.h1
+              initial={entranceInitial}
+              animate={cinemaMode ? entranceCinema : entranceVisible}
+              transition={entranceT(0.15)}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-foreground mb-4 sm:mb-6 leading-tight"
+            >
               {HERO_HEADLINE}
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-secondary mb-6 sm:mb-8 max-w-[600px] mx-auto sm:mx-0">
+            </motion.h1>
+            <motion.p
+              initial={entranceInitial}
+              animate={cinemaMode ? entranceCinema : entranceVisible}
+              transition={entranceT(0.25)}
+              className="text-base sm:text-lg md:text-xl text-secondary mb-6 sm:mb-8 max-w-[600px] mx-auto sm:mx-0"
+            >
               {HERO_SUBHEAD}
-            </p>
+            </motion.p>
             <div className="flex flex-col items-center sm:items-start gap-3 sm:gap-4">
-              <Link
-                href="#tournaments"
-                className={buttonVariants({ variant: "default", size: "xl" })}
+              <motion.div
+                initial={entranceInitial}
+                animate={cinemaMode ? entranceCinema : entranceVisible}
+                transition={entranceT(0.35)}
               >
-                {HERO_CTA_TEXT}
-              </Link>
-              <p className="text-xs sm:text-sm text-foreground">
+                <Link
+                  href="#tournaments"
+                  className={buttonVariants({ variant: "default", size: "xl" })}
+                >
+                  {HERO_CTA_TEXT}
+                </Link>
+              </motion.div>
+              <motion.p
+                initial={entranceInitial}
+                animate={cinemaMode ? entranceCinema : entranceVisible}
+                transition={entranceT(0.45)}
+                className="text-xs sm:text-sm text-foreground"
+              >
                 {tournamentTitle ? `Next up: ${tournamentTitle}` : HERO_COMING_SOON}
-              </p>
+              </motion.p>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

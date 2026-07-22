@@ -40,7 +40,10 @@ export async function SponsorMarquee() {
   return (
     <section role="region" aria-label="Sponsors" className="py-6 sm:py-8 border-b border-border-subtle">
       <div className="overflow-hidden">
-        <div className="marquee-track">
+        <div
+          className="marquee-track"
+          style={{ "--marquee-duration": `${sponsors.length * 8}s` } as React.CSSProperties}
+        >
           <div className="flex items-center gap-8 sm:gap-12 md:gap-24 px-6 sm:px-8 md:px-12">
             {sponsors.map((sponsor) => (
               <SponsorLogo key={sponsor.id} name={sponsor.name} logo_url={sponsor.logo_url} />

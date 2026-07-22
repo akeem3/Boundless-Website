@@ -3,6 +3,7 @@ import Image from "next/image";
 import { buildInstagramLink } from "@/lib/links";
 import { INSTAGRAM_URL } from "@/lib/constants/copy";
 import { createClient } from "@/lib/supabase/server";
+import { Reveal } from "@/components/blocks/Reveal";
 
 async function getInstagramUrl(): Promise<string> {
   const supabase = await createClient();
@@ -18,6 +19,7 @@ export async function Footer() {
   const instagramUrl = await getInstagramUrl();
 
   return (
+    <Reveal delay={0}>
     <footer className="border-t border-border-subtle bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
@@ -53,5 +55,6 @@ export async function Footer() {
         </div>
       </div>
     </footer>
+    </Reveal>
   );
 }

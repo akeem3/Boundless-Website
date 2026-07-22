@@ -9,6 +9,7 @@ import {
 } from "@/lib/constants/copy";
 import { buildFindTeamLink } from "@/lib/links";
 import { createClient } from "@/lib/supabase/server";
+import { Reveal } from "@/components/blocks/Reveal";
 
 interface Tournament {
   title: string;
@@ -125,63 +126,77 @@ export async function TournamentSection() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-start">
           {/* Left Column — Text Content */}
           <div className="md:col-span-7 order-2 md:order-1">
-            <h2
-              id="tournaments-headline"
-              className="text-2xl sm:text-3xl md:text-4xl text-foreground font-semibold mb-6 sm:mb-8"
-            >
-              {TOURNAMENTS_HEADLINE}
-            </h2>
+            <Reveal delay={0}>
+              <h2
+                id="tournaments-headline"
+                className="text-2xl sm:text-3xl md:text-4xl text-foreground font-semibold mb-6 sm:mb-8"
+              >
+                {TOURNAMENTS_HEADLINE}
+              </h2>
+            </Reveal>
 
             {tournament ? (
               <>
-                <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground font-semibold leading-tight mb-6 sm:mb-10">
-                  {tournament.title}
-                </h3>
+                <Reveal delay={0.1}>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground font-semibold leading-tight mb-6 sm:mb-10">
+                    {tournament.title}
+                  </h3>
+                </Reveal>
 
-                <div className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
-                  <DetailRow icon={Calendar} text={dateTimeStr} />
-                  <DetailRow icon={MapPin} text={tournament.location} />
-                  <DetailRow icon={Ticket} text={feeStr} />
-                </div>
+                <Reveal delay={0.15}>
+                  <div className="space-y-3 sm:space-y-5 mb-6 sm:mb-10">
+                    <DetailRow icon={Calendar} text={dateTimeStr} />
+                    <DetailRow icon={MapPin} text={tournament.location} />
+                    <DetailRow icon={Ticket} text={feeStr} />
+                  </div>
+                </Reveal>
 
                 {tournament.description && (
-                  <p className="text-secondary text-sm leading-relaxed mb-6 sm:mb-10">
-                    {tournament.description}
-                  </p>
+                  <Reveal delay={0.2}>
+                    <p className="text-secondary text-sm leading-relaxed mb-6 sm:mb-10">
+                      {tournament.description}
+                    </p>
+                  </Reveal>
                 )}
 
-                <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                  <a
-                    href={registerUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={buttonVariants({ variant: "default", size: "lg" })}
-                  >
-                    {TOURNAMENTS_CTA_JOIN}
-                  </a>
-                  <a
-                    href={findTeamLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={buttonVariants({ variant: "ghost", size: "lg" })}
-                  >
-                    {TOURNAMENTS_CTA_FIND}
-                  </a>
-                </div>
+                <Reveal delay={0.25}>
+                  <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                    <a
+                      href={registerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={buttonVariants({ variant: "default", size: "lg" })}
+                    >
+                      {TOURNAMENTS_CTA_JOIN}
+                    </a>
+                    <a
+                      href={findTeamLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={buttonVariants({ variant: "ghost", size: "lg" })}
+                    >
+                      {TOURNAMENTS_CTA_FIND}
+                    </a>
+                  </div>
+                </Reveal>
 
-                <p className="text-secondary/70 text-xs leading-relaxed">
-                  {TOURNAMENTS_CTA_MICROCOPY}
-                </p>
+                <Reveal delay={0.3}>
+                  <p className="text-secondary/70 text-xs leading-relaxed">
+                    {TOURNAMENTS_CTA_MICROCOPY}
+                  </p>
+                </Reveal>
               </>
             ) : (
-              <p className="text-secondary">
-                Our biggest tournament yet. 40+ nationalities, one pitch.
-              </p>
+              <Reveal delay={0.1}>
+                <p className="text-secondary">
+                  Our biggest tournament yet. 40+ nationalities, one pitch.
+                </p>
+              </Reveal>
             )}
           </div>
 
           {/* Right Column — Poster Image */}
-          <div className="md:col-span-5 order-1 md:order-2">
+          <Reveal delay={0.2} className="md:col-span-5 order-1 md:order-2">
             <div className="relative aspect-7/9 rounded-[15px] overflow-hidden border-[1.26px] border-border-subtle">
               {tournament?.poster_url ? (
                 <Image
@@ -199,7 +214,7 @@ export async function TournamentSection() {
                 </div>
               )}
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

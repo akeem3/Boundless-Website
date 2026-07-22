@@ -69,17 +69,17 @@
 
 @keyframes marquee {
   0% {
-    transform: translateX(-25%);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateX(0%);
+    transform: translateX(-50%);
   }
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 50s linear infinite;
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
 }
 
 @media (hover: hover) {
